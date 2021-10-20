@@ -10,17 +10,27 @@
   <body>
     <div class="container">
       <h1 class="title">BannerCreator</h1>
-      <canvas></canvas>
-      <div class="size-input-container">
-        <label><input class="width-input" type="text" />width</label>
-        <label><input class="height-input" type="text" />height</label>
+      <canvas id="canvas" width="700" height="350"></canvas>
+      <div class="setting-input-container">
+        <label>width<input class="width-setting" type="text" /></label>
+        <label>height<input class="height-setting" type="text" /></label>
       </div>
       <div class="text-input-container">
-        <input class="text-input" type="text" />
+        <input class="text-input" type="text" placeholder="Type text here :)" />
       </div>
-      <div class="font-input-container">
-        <select name="" id=""></select>
-        <select name="" id=""></select>
+      <div class="font-select-container">
+        <select name="familly">
+          <option value="serif" selected>serif</option>
+          <option value="sans-serif">sans-serif</option>
+          <option value="monospace">monospace</option>
+          <option value="cursive">cursive</option>
+        </select>
+        <select name="size">
+          <option value="15px" selected>15px</option>
+          <option value="20px">20px</option>
+          <option value="25px">25px</option>
+          <option value="30px">30px</option>
+        </select>
       </div>
       <div class="color-picker-container"></div>
       <div class="button-container">
