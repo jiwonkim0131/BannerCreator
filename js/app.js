@@ -12,6 +12,14 @@ const $source = document.querySelector('.canvas-img > img');
 const $upload = document.querySelector('.upload');
 const $download = document.querySelector('.download');
 
+// 랜덤 컬러 코드 생성
+const getRandomColor = () => '#' + Math.round(Math.random() * 0xffffff).toString(16);
+
+const getRandomNum = range => Math.floor(Math.random() * range);
+
+const getRandomImageUrl = (width, height) =>
+  `https://picsum.photos/id/${getRandomNum(500)}/${width}/${height}`;
+
 $widthSetting.onkeyup = ({ target }) => {
   let width = 700;
   width = target.value;
@@ -32,6 +40,23 @@ $fontSelectContainer.onchange = ({ target }) => {
   ctx.clearRect(0, 0, 700, 350);
   ctx.font = font.size + ' ' + font.familly;
   ctx.fillText($textInput.value, 10, 50);
+};
+
+//캔버스 컬러 변경 이벤트
+document.querySelector('.canvas-bg-color').onclick = e => {
+  canvas.backgroundColor = e.target.value;
+  render();
+};
+
+//폰트 컬러 변경 이벤트
+document.querySelector('.font-color').onclick = e => {
+  canvas.color = e.target.value;
+  render();
+};
+
+//랜덤 이미지 생성 이벤트
+document.querySelector('.random-image').onclick = () => {
+  $source.src = getRandomImageUrl(1500, 900);
 };
 
 $upload.onchange = e => {
