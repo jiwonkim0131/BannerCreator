@@ -83,6 +83,7 @@ document.querySelector('.random-color-font').onclick = e => {
 //랜덤 이미지 생성 이벤트
 document.querySelector('.random-image').onclick = () => {
   $source.src = getRandomImageUrl(1500, 900);
+  $source.crossOrigin = 'Anonymous';
 };
 
 $upload.onchange = e => {
