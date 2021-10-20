@@ -57,6 +57,7 @@ document.querySelector('.font-color').onclick = e => {
 //랜덤 이미지 생성 이벤트
 document.querySelector('.random-image').onclick = () => {
   $source.src = getRandomImageUrl(1500, 900);
+  $source.crossOrigin = 'Anonymous';
 };
 
 $upload.onchange = e => {
@@ -84,6 +85,7 @@ $source.onload = () => {
   }, 500);
 };
 
-$download.onclick = e => {
+document.querySelector('.download').onclick = e => {
+  console.log('chekc');
   e.target.href = $canvas.toDataURL();
 };
