@@ -4,9 +4,25 @@ const $heightSetting = document.querySelector('.height-setting');
 const $textInput = document.querySelector('.text-input');
 const $fontSelectContainer = document.querySelector('.font-select-container');
 const ctx = $canvas.getContext('2d');
-const font = {
-  size: '15px',
-  familly: 'serif',
+
+const canvas = {
+  width: 700,
+  height: 350,
+  fontSize: '15px',
+  fontFamilly: 'serif',
+  textAlign: 'center',
+  backgroundColor: 'skyblue',
+  color: 'black',
+};
+
+const render = () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = canvas.backgroundColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = canvas.fontSize + ' ' + canvas.fontFamilly;
+  ctx.textAlign = canvas.textAlign;
+  ctx.fillStyle = canvas.color;
+  ctx.fillText($textInput.value, canvas.width / 2, canvas.height / 2);
 };
 const $source = document.querySelector('.canvas-img > img');
 const $upload = document.querySelector('.upload');
@@ -21,36 +37,46 @@ const getRandomImageUrl = (width, height) =>
   `https://picsum.photos/id/${getRandomNum(500)}/${width}/${height}`;
 
 $widthSetting.onkeyup = ({ target }) => {
-  let width = 700;
-  width = target.value;
-  $canvas.setAttribute('width', width);
+  canvas.width = target.value;
+  $canvas.setAttribute('width', canvas.width);
+  render();
 };
 $heightSetting.onkeyup = ({ target }) => {
-  let height = 700;
-  height = target.value;
-  $canvas.setAttribute('height', height);
+  canvas.height = target.value;
+  $canvas.setAttribute('height', canvas.height);
+  render();
 };
 $textInput.onkeyup = () => {
-  ctx.clearRect(0, 0, 700, 350);
-  ctx.font = font.size + ' ' + font.familly;
-  ctx.fillText($textInput.value, 10, 50);
+  render();
 };
 $fontSelectContainer.onchange = ({ target }) => {
-  font[target.name] = target.value;
-  ctx.clearRect(0, 0, 700, 350);
-  ctx.font = font.size + ' ' + font.familly;
-  ctx.fillText($textInput.value, 10, 50);
+  canvas[target.name] = target.value;
+  render();
 };
 
-//캔버스 컬러 변경 이벤트
-document.querySelector('.canvas-bg-color').onclick = e => {
+//캔버스 컬러 피커  이벤트
+document.querySelector('.canvas-bg-color').onchange = e => {
   canvas.backgroundColor = e.target.value;
   render();
 };
 
-//폰트 컬러 변경 이벤트
-document.querySelector('.font-color').onclick = e => {
+//캔버스 컬러 랜덤 변경  이벤트
+document.querySelector('.random-color-canvas').onclick = () => {
+  canvas.backgroundColor = getRandomColor();
+  document.querySelector('.canvas-bg-color').value = canvas.backgroundColor;
+  render();
+};
+
+//폰트 컬러 피커 이벤트
+document.querySelector('.font-color').onchange = e => {
   canvas.color = e.target.value;
+  render();
+};
+
+//폰트 컬러 랜덤 변경  이벤트
+document.querySelector('.random-color-font').onclick = e => {
+  canvas.color = getRandomColor();
+  document.querySelector('.font-color').value = canvas.color;
   render();
 };
 
@@ -86,6 +112,14 @@ $source.onload = () => {
 };
 
 document.querySelector('.download').onclick = e => {
+<<<<<<< HEAD
   console.log('chekc');
+=======
+>>>>>>> af676b01d24ea293aef5c4e36e14bf5c0b477ee2
   e.target.href = $canvas.toDataURL();
 };
+
+window.addEventListener('DOMContentLoaded', () => {
+  ctx.fillStyle = canvas.backgroundColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+});

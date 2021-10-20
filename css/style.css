@@ -23,7 +23,7 @@ body {
   height: 350px; */
   display: block;
   margin: 0 auto;
-  background-color: skyblue;
+  /* background-color: skyblue; */
 }
 
 .spinner {
@@ -58,6 +58,7 @@ body {
   padding: 10px;
   border-width: 0 0 2px 0;
   outline: none;
+  font-size: 20px;
 }
 
 .font-select-container {
@@ -71,6 +72,12 @@ body {
   gap: 5%;
 
   padding: 20px;
+}
+
+.color-picker-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 100px;
 }
 
 .upload {
