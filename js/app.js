@@ -54,15 +54,29 @@ $fontSelectContainer.onchange = ({ target }) => {
   render();
 };
 
-//캔버스 컬러 변경 이벤트
-document.querySelector('.canvas-bg-color').onclick = e => {
+//캔버스 컬러 피커  이벤트
+document.querySelector('.canvas-bg-color').onchange = e => {
   canvas.backgroundColor = e.target.value;
   render();
 };
 
-//폰트 컬러 변경 이벤트
-document.querySelector('.font-color').onclick = e => {
+//캔버스 컬러 랜덤 변경  이벤트
+document.querySelector('.random-color-canvas').onclick = () => {
+  canvas.backgroundColor = getRandomColor();
+  document.querySelector('.canvas-bg-color').value = canvas.backgroundColor;
+  render();
+};
+
+//폰트 컬러 피커 이벤트
+document.querySelector('.font-color').onchange = e => {
   canvas.color = e.target.value;
+  render();
+};
+
+//폰트 컬러 랜덤 변경  이벤트
+document.querySelector('.random-color-font').onclick = e => {
+  canvas.color = getRandomColor();
+  document.querySelector('.font-color').value = canvas.color;
   render();
 };
 
@@ -96,7 +110,7 @@ $source.onload = () => {
   }, 500);
 };
 
-$download.onclick = e => {
+document.querySelector('.download').onclick = e => {
   e.target.href = $canvas.toDataURL();
 };
 
