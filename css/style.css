@@ -1,6 +1,23 @@
+*,
+body {
+  margin: auto;
+  text-align: center;
+}
+
+.hidden {
+  overflow: hidden;
+  position: absolute !important;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+}
+
 .title {
   text-align: center;
 }
+
 #canvas {
   /* width: 700px;
   height: 350px; */
@@ -8,30 +25,61 @@
   margin: 0 auto;
   background-color: skyblue;
 }
+
+.spinner {
+  position: fixed;
+  top: 25%;
+  left: 50%;
+  transform: translate3D(-50%, 0, 0);
+  width: 50px;
+}
+
 .setting-input-container {
   display: flex;
   justify-content: space-evenly;
   margin-top: 40px;
 }
+
 .width-setting,
 .height-setting {
   width: 200px;
   height: 30px;
   margin-left: 15px;
 }
+
 .text-input-container {
   margin-top: 40px;
   display: flex;
   justify-content: center;
 }
+
 .text-input {
   width: 400px;
   padding: 10px;
   border-width: 0 0 2px 0;
   outline: none;
 }
+
 .font-select-container {
   display: flex;
   justify-content: center;
   margin-top: 30px;
+}
+
+.button-container {
+  display: flex;
+  gap: 5%;
+
+  padding: 20px;
+}
+
+.upload {
+  max-width: 500px;
+
+  flex: 1 1 45%;
+}
+
+.download {
+  max-width: 500px;
+  flex: 1 1 45%;
 }
