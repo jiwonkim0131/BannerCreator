@@ -1,7 +1,38 @@
 const $canvas = document.querySelector('canvas');
+const $widthSetting = document.querySelector('.width-setting');
+const $heightSetting = document.querySelector('.height-setting');
+const $textInput = document.querySelector('.text-input');
+const $fontSelectContainer = document.querySelector('.font-select-container');
+const ctx = $canvas.getContext('2d');
+const font = {
+  size: '15px',
+  familly: 'serif',
+};
 const $source = document.querySelector('.canvas-img > img');
 const $upload = document.querySelector('.upload');
 const $download = document.querySelector('.download');
+
+$widthSetting.onkeyup = ({ target }) => {
+  let width = 700;
+  width = target.value;
+  $canvas.setAttribute('width', width);
+};
+$heightSetting.onkeyup = ({ target }) => {
+  let height = 700;
+  height = target.value;
+  $canvas.setAttribute('height', height);
+};
+$textInput.onkeyup = () => {
+  ctx.clearRect(0, 0, 700, 350);
+  ctx.font = font.size + ' ' + font.familly;
+  ctx.fillText($textInput.value, 10, 50);
+};
+$fontSelectContainer.onchange = ({ target }) => {
+  font[target.name] = target.value;
+  ctx.clearRect(0, 0, 700, 350);
+  ctx.font = font.size + ' ' + font.familly;
+  ctx.fillText($textInput.value, 10, 50);
+};
 
 $upload.onchange = e => {
   if (!e.target.matches('input')) return;
@@ -23,8 +54,7 @@ $source.onload = () => {
   document.querySelector('.spinner').removeAttribute('hidden');
 
   setTimeout(() => {
-    const context = $canvas.getContext('2d');
-    context.drawImage($source, 0, 0);
+    ctx.drawImage($source, 0, 0);
     document.querySelector('.spinner').setAttribute('hidden', '');
   }, 500);
 };
@@ -32,52 +62,3 @@ $source.onload = () => {
 $download.onclick = e => {
   e.target.href = $canvas.toDataURL();
 };
-
-// function getCookie(name) {
-//   var parts = document.cookie.split(name + '=');
-//   console.log(parts);
-//   if (parts.length == 2) return parts.pop().split(';').shift();
-// }
-
-// function expireCookie(cName) {
-//   document.cookie = encodeURIComponent(cName) + '=deleted; expires=' + new Date(0).toUTCString();
-// }
-
-// //   function setCursor( docStyle, buttonStyle ) {
-// //       document.getElementById( "doc" ).style.cursor = docStyle;
-// //       document.getElementById( "button-id" ).style.cursor = buttonStyle;
-// //   }
-
-// function setFormToken() {
-//   var downloadToken = new Date().getTime();
-//   //   document.getElementById('downloadToken').value = downloadToken;
-//   return downloadToken;
-// }
-
-// var downloadTimer;
-// var attempts = 30;
-
-// // Prevents double-submits by waiting for a cookie from the server.
-// function blockResubmit() {
-//   var downloadToken = setFormToken();
-//   console.log(downloadToken);
-//   //   setCursor( "wait", "wait" );
-
-//   downloadTimer = window.setInterval(function () {
-//     var token = getCookie('downloadToken');
-
-//     if (token == downloadToken || attempts == 0) {
-//       unblockSubmit();
-//     }
-
-//     attempts--;
-//   }, 1000);
-// }
-
-// function unblockSubmit() {
-//   console.log('exit');
-//   // setCursor( "auto", "pointer" );
-//   window.clearInterval(downloadTimer);
-//   expireCookie('downloadToken');
-//   attempts = 30;
-// }
