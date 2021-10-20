@@ -10,7 +10,11 @@
   <body>
     <div class="container">
       <h1 class="title">BannerCreator</h1>
-      <canvas></canvas>
+      <canvas id="canvas"></canvas>
+      <div class="canvas-img hidden">
+        <img src="" alt="" class="source" />
+      </div>
+      <img hidden class="spinner" src="./ball-triangle.svg" alt="Loading..." />
       <div class="size-input-container">
         <label><input class="width-input" type="text" />width</label>
         <label><input class="height-input" type="text" />height</label>
@@ -24,8 +28,11 @@
       </div>
       <div class="color-picker-container"></div>
       <div class="button-container">
-        <button class="upload"></button>
-        <button class="download"></button>
+        <label class="upload">
+          upload
+          <input type="file" class="hidden" />
+        </label>
+        <a class="download" href="" download="BannerCreator.png">다운로드</a>
       </div>
     </div>
     <script src="./js/app.js"></script>

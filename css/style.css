@@ -1,0 +1,48 @@
+*,
+body {
+  margin: auto;
+  text-align: center;
+}
+
+.hidden {
+  overflow: hidden;
+  position: absolute !important;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+}
+
+canvas {
+  width: 700px;
+  height: 400px;
+  border: 1px solid;
+  object-fit: contain;
+}
+
+.button-container {
+  display: flex;
+  gap: 5%;
+
+  padding: 20px;
+}
+
+.upload {
+  max-width: 500px;
+
+  flex: 1 1 45%;
+}
+
+.download {
+  max-width: 500px;
+  flex: 1 1 45%;
+}
+
+.spinner {
+  position: fixed;
+  top: 25%;
+  left: 50%;
+  transform: translate3D(-50%, 0, 0);
+  width: 50px;
+}
