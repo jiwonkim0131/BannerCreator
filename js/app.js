@@ -13,12 +13,20 @@ const canvas = {
   textAlign: 'center',
   backgroundColor: 'skyblue',
   color: 'black',
+  index: 0,
+  isImage: false,
 };
 
-const render = () => {
+const render = target => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = canvas.backgroundColor;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (canvas.isImage) {
+    ctx.drawImage($source, 0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.fillStyle = canvas.backgroundColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
   ctx.font = canvas.fontSize + ' ' + canvas.fontFamilly;
   ctx.textAlign = canvas.textAlign;
   const x =
@@ -37,10 +45,10 @@ const $download = document.querySelector('.download');
 // 랜덤 컬러 코드 생성
 const getRandomColor = () => '#' + Math.round(Math.random() * 0xffffff).toString(16);
 
-const getRandomNum = range => Math.floor(Math.random() * range);
+const getRandomNum = () => Math.floor(Math.random() * 12);
 
-const getRandomImageUrl = (width, height) =>
-  `https://picsum.photos/id/${getRandomNum(500)}/${width}/${height}`;
+// const getRandomImageUrl = (width, height) =>
+//   `https://picsum.photos/id/${getRandomNum(500)}/${width}/${height}`;
 
 $widthSetting.onkeyup = ({ target }) => {
   canvas.width = target.value;
@@ -63,12 +71,14 @@ $fontSelectContainer.onchange = ({ target }) => {
 //캔버스 컬러 피커  이벤트
 document.querySelector('.canvas-bg-color').onchange = e => {
   canvas.backgroundColor = e.target.value;
+  canvas.isImage = false;
   render();
 };
 
 //캔버스 컬러 랜덤 변경  이벤트
 document.querySelector('.random-color-canvas').onclick = () => {
   canvas.backgroundColor = getRandomColor();
+  canvas.isImage = false;
   document.querySelector('.canvas-bg-color').value = canvas.backgroundColor;
   render();
 };
@@ -88,8 +98,12 @@ document.querySelector('.random-color-font').onclick = e => {
 
 //랜덤 이미지 생성 이벤트
 document.querySelector('.random-image').onclick = () => {
-  $source.src = getRandomImageUrl(1500, 900);
-  $source.crossOrigin = 'Anonymous';
+  // $source.src = getRandomImageUrl(1500, 900);
+  const randomIndex = getRandomNum();
+  canvas.isImage = true;
+  $source.src = `./img/img-${randomIndex}.png`;
+  canvas.index = randomIndex;
+  // $source.crossOrigin = 'Anonymous';
 };
 
 $upload.onchange = e => {
@@ -105,16 +119,8 @@ $upload.onchange = e => {
 };
 
 $source.onload = () => {
-  if ($source.naturalWidth > 1919 || $source.naturalHeight > 1919) {
-    alert('please small size image');
-    return;
-  }
-  document.querySelector('.spinner').removeAttribute('hidden');
-
-  setTimeout(() => {
-    ctx.drawImage($source, 0, 0);
-    document.querySelector('.spinner').setAttribute('hidden', '');
-  }, 500);
+  canvas.isImage = true;
+  render();
 };
 
 document.querySelector('.download').onclick = e => {
