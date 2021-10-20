@@ -21,8 +21,14 @@ const render = () => {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = canvas.fontSize + ' ' + canvas.fontFamilly;
   ctx.textAlign = canvas.textAlign;
+  const x =
+    canvas.textAlign === 'center'
+      ? canvas.width / 2
+      : canvas.textAlign === 'left'
+      ? 10
+      : canvas.width - 10;
   ctx.fillStyle = canvas.color;
-  ctx.fillText($textInput.value, canvas.width / 2, canvas.height / 2);
+  ctx.fillText($textInput.value, x, canvas.height / 2);
 };
 const $source = document.querySelector('.canvas-img > img');
 const $upload = document.querySelector('.upload');
@@ -116,6 +122,8 @@ document.querySelector('.download').onclick = e => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
+  $widthSetting.value = canvas.width;
+  $heightSetting.value = canvas.height;
   ctx.fillStyle = canvas.backgroundColor;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 });
