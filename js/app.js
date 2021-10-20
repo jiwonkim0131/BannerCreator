@@ -112,10 +112,6 @@ $source.onload = () => {
 };
 
 document.querySelector('.download').onclick = e => {
-<<<<<<< HEAD
-  console.log('chekc');
-=======
->>>>>>> af676b01d24ea293aef5c4e36e14bf5c0b477ee2
   e.target.href = $canvas.toDataURL();
 };
 
