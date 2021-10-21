@@ -10,6 +10,8 @@ const ctx = $canvas.getContext('2d');
 const $source = document.querySelector('.canvas-img > img');
 const $textInput = document.querySelector('.text-input');
 const $fontSelectContainer = document.querySelector('.font-select-container');
+const $bgColorPicker = document.querySelector('.bg-color-picker');
+const $fontColorPicker = document.querySelector('.font-color-picker');
 const $favBgList = document.querySelector('.fav-bg-list');
 const $favFontList = document.querySelector('.fav-font-list');
 const $upload = document.querySelector('.upload');
@@ -23,12 +25,19 @@ const canvas = {
   backgroundColor: 'skyblue',
   color: 'black',
   index: 0,
-  isImage: false,
+  isImage: false
 };
 
 // 로컬스토리지에 저장된배경, 폰트 색 즐겨찾기 데이터
-let favoriteBackgroundColor = JSON.parse(localStorage.getItem('favoriteBackgroundColor'));
-let favoriteFontColor = JSON.parse(localStorage.getItem('favoriteFontColor'));
+const favoriteBackgroundColor = JSON.parse(
+  localStorage.getItem('favoriteBackgroundColor')
+)
+  ? JSON.parse(localStorage.getItem('favoriteBackgroundColor'))
+  : [];
+const favoriteFontColor = JSON.parse(localStorage.getItem('favoriteFontColor'))
+  ? JSON.parse(localStorage.getItem('favoriteFontColor'))
+  : [];
+
 let templateLists = JSON.parse(localStorage.getItem('template'));
 
 function renderText(x) {
@@ -37,7 +46,11 @@ function renderText(x) {
 
   textArrayByLinefeed.forEach((text, index) => {
     const currentY =
-      (canvas.height - textArrayByLinefeed.length * canvas.fontSize.slice(0, 2) * LINE_HEIGHT) / 2 +
+      (canvas.height -
+        textArrayByLinefeed.length *
+          canvas.fontSize.slice(0, 2) *
+          LINE_HEIGHT) /
+        2 +
       canvas.fontSize.slice(0, 2) * index * LINE_HEIGHT;
     ctx.fillText(text, x, currentY);
   });
@@ -68,26 +81,17 @@ const render = () => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('.bg-color-picker').value = getRandomColor();
-  canvas.backgroundColor = document.querySelector('.bg-color-picker').value;
+  $bgColorPicker.value = getRandomColor();
+  canvas.backgroundColor = $bgColorPicker.value;
 
   $widthSetting.value = canvas.width;
   $heightSetting.value = canvas.height;
   ctx.fillStyle = canvas.backgroundColor;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // 로컬스토리지에 저장된 즐겨찾기 세팅
-  if (favoriteBackgroundColor) {
-    fetchFavoriteBgColor();
-  } else {
-    favoriteBackgroundColor = [];
-  }
-
-  if (favoriteFontColor) {
-    fetchFavoriteFontColor();
-  } else {
-    favoriteFontColor = [];
-  }
+  // 로컬스토리지에 저장되어있는 즐겨찾기(배경색, 폰트색) 초기화
+  fetchFavoriteBgColor();
+  fetchFavoriteFontColor();
 
   // template 받아오기
   if (templateLists) {
@@ -141,8 +145,8 @@ $fontSelectContainer.onchange = ({ target }) => {
   render();
 };
 
-//캔버스 컬러 피커 색상 선택  이벤트
-document.querySelector('.bg-color-picker').onchange = e => {
+// 캔버스 컬러 피커 색상 선택  이벤트
+$bgColorPicker.onchange = e => {
   canvas.backgroundColor = e.target.value;
   canvas.isImage = false;
   $source.removeAttribute('src');
@@ -150,26 +154,26 @@ document.querySelector('.bg-color-picker').onchange = e => {
   render();
 };
 
-//캔버스 컬러 피커 랜덤 색상 변경  이벤트
+// 캔버스 컬러 피커 랜덤 색상 변경  이벤트
 document.querySelector('.random-color-canvas').onclick = () => {
   canvas.backgroundColor = getRandomColor();
   canvas.isImage = false;
   $source.removeAttribute('src');
-  document.querySelector('.bg-color-picker').value = canvas.backgroundColor;
+  $bgColorPicker.value = canvas.backgroundColor;
 
   render();
 };
 
-//폰트 컬러 피커 색상 선택 이벤트
-document.querySelector('.font-color-picker').onchange = e => {
+// 폰트 컬러 피커 색상 선택 이벤트
+$fontColorPicker.onchange = e => {
   canvas.color = e.target.value;
   render();
 };
 
-//폰트 컬러 피커 랜덤 색상 변경  이벤트
+// 폰트 컬러 피커 랜덤 색상 변경  이벤트
 document.querySelector('.random-color-font').onclick = e => {
   canvas.color = getRandomColor();
-  document.querySelector('.font-color-picker').value = canvas.color;
+  $fontColorPicker.value = canvas.color;
   render();
 };
 
@@ -220,11 +224,12 @@ const fetchFavoriteFontColor = () => {
     $favFontItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
   <div class="fav-font-item"></div>`;
     $favFontList.appendChild($favFontItemContainer);
-    $favFontList.lastElementChild.lastElementChild.style.backgroundColor = favoriteFontColor[idx];
+    $favFontList.lastElementChild.lastElementChild.style.backgroundColor =
+      favoriteFontColor[idx];
   });
 };
 
-//현재 배경색 즐겨찾기에 저장
+// 현재 배경색 즐겨찾기에 저장
 document.querySelector('.favorite-bg').onclick = () => {
   if (favoriteBackgroundColor.includes(canvas.backgroundColor + '')) {
     toaster.createToastAction(TOAST_TYPE.WARNING);
@@ -238,11 +243,14 @@ document.querySelector('.favorite-bg').onclick = () => {
   }
 
   favoriteBackgroundColor.push(canvas.backgroundColor);
-  localStorage.setItem('favoriteBackgroundColor', JSON.stringify(favoriteBackgroundColor));
+  localStorage.setItem(
+    'favoriteBackgroundColor',
+    JSON.stringify(favoriteBackgroundColor)
+  );
   favoriteBgItemAdd();
 };
 
-//현재 폰트색 즐겨찾기에 저장
+// 현재 폰트색 즐겨찾기에 저장
 document.querySelector('.favorite-font').onclick = () => {
   if (favoriteFontColor.includes(canvas.color + '')) {
     toaster.createToastAction(TOAST_TYPE.WARNING);
@@ -264,12 +272,17 @@ document.querySelector('.favorite-font').onclick = () => {
 $favBgList.onclick = e => {
   if (e.target.classList.contains('fav-item-delete')) {
     favoriteBackgroundColor.splice(e.target.parentNode.getAttribute('id'), 1);
-    localStorage.setItem('favoriteBackgroundColor', JSON.stringify(favoriteBackgroundColor));
+    localStorage.setItem(
+      'favoriteBackgroundColor',
+      JSON.stringify(favoriteBackgroundColor)
+    );
     e.target.parentNode.remove();
   }
   if (e.target.classList.contains('fav-bg-item')) {
-    canvas.backgroundColor = favoriteBackgroundColor[e.target.parentNode.getAttribute('id')];
-    document.querySelector('.bg-color-picker').value = canvas.backgroundColor;
+    canvas.backgroundColor =
+      favoriteBackgroundColor[e.target.parentNode.getAttribute('id')];
+    $bgColorPicker.value = canvas.backgroundColor;
+    canvas.isImage = false;
     render();
   }
 };
@@ -278,22 +291,28 @@ $favBgList.onclick = e => {
 $favFontList.onclick = e => {
   if (e.target.classList.contains('fav-item-delete')) {
     favoriteFontColor.splice(e.target.parentNode.getAttribute('id'), 1);
-    localStorage.setItem('favoriteFontColor', JSON.stringify(favoriteFontColor));
+    localStorage.setItem(
+      'favoriteFontColor',
+      JSON.stringify(favoriteFontColor)
+    );
     e.target.parentNode.remove();
   }
   if (e.target.classList.contains('fav-font-item')) {
     canvas.color = favoriteFontColor[e.target.parentNode.getAttribute('id')];
-    document.querySelector('.font-color-picker').value = canvas.color;
+    $fontColorPicker.value = canvas.color;
+    render();
   }
 };
 
 // template 적용하기
-document.querySelector('.favorite-template-container').onclick = ({ target }) => {
+document.querySelector('.favorite-template-container').onclick = ({
+  target
+}) => {
   if (!target.classList.contains('template-img')) return;
 
-  let id = [...document.querySelector('.favorite-template-container').children].indexOf(
-    target.parentNode
-  );
+  const id = [
+    ...document.querySelector('.favorite-template-container').children
+  ].indexOf(target.parentNode);
   console.log(id);
   if (id === -1) return;
 
@@ -313,7 +332,7 @@ const setCanvasState = ({
   textAlign,
   backgroundColor,
   color,
-  content,
+  content
 }) => {
   canvas.width = width;
   canvas.height = height;
@@ -322,7 +341,7 @@ const setCanvasState = ({
   canvas.textAlign = textAlign;
   canvas.backgroundColor = backgroundColor;
   canvas.color = color;
-  canvas.isImage = url !== '' ? true : false;
+  canvas.isImage = url !== '';
   $source.src = url !== '' ? url : '';
 
   $widthSetting.value = canvas.width;
@@ -360,7 +379,7 @@ document.querySelector('.download').onclick = e => {
   e.target.href = $canvas.toDataURL();
 };
 
-//랜덤 이미지 생성 이벤트
+// 랜덤 이미지 생성 이벤트
 document.querySelector('.random-image').onclick = () => {
   const randomIndex = getRandomNum();
   canvas.isImage = true;
@@ -386,7 +405,7 @@ const addTemplate = () => {
     textAlign: canvas.textAlign,
     backgroundColor: canvas.backgroundColor,
     color: canvas.color,
-    content: $textInput.value || 'hello, world',
+    content: $textInput.value || 'hello, world'
   };
 
   templateLists.push(template);
@@ -399,10 +418,12 @@ const templateRender = () => {
   const $container = document.querySelector('.favorite-template-container');
 
   $container.innerHTML = `${templateLists
-    .map(template => `<div><img class="template-img" src=${template.thumbnail}></div>`)
+    .map(
+      template =>
+        `<div><img class="template-img" src=${template.thumbnail}></div>`
+    )
     .join('')}`;
 };
 
-const getId = () => {
-  return document.querySelector('.favorite-template-container').children.length + 1;
-};
+const getId = () =>
+  document.querySelector('.favorite-template-container').children.length + 1;
