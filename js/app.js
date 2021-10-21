@@ -119,7 +119,7 @@ const addTemplate = () => {
   const template = {
     id: getId(),
     thumbnail: $canvas.toDataURL(),
-    url: $source.src.replace(/http:\/\/127.0.0.1:5500\//, '')
+    url: $source.src.replace(/http:\/\/127.0.0.1:5500\/|index.html/g, '')
       ? $source.src
       : '',
     width: canvas.getWidth(),
