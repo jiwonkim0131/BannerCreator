@@ -55,8 +55,32 @@ select:after {
 }
 
 .title {
+  font-family: 'Rampart One';
   text-align: center;
   font-size: 48px;
+}
+.s1,
+.s7,
+.s12 {
+  color: rgba(237, 169, 12);
+}
+.s2,
+.s6,
+.s9 {
+  color: rgba(194, 37, 45);
+}
+.s3,
+.s10 {
+  color: rgba(20, 153, 100);
+}
+.s4,
+.s11 {
+  color: rgba(8, 62, 177);
+}
+.s5,
+.s8,
+.s13 {
+  color: rgba(193, 72, 176);
 }
 
 #canvas {

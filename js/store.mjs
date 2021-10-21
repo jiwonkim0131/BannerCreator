@@ -2,7 +2,7 @@ const canvas = {
   width: 700,
   height: 350,
   fontSize: '40px',
-  fontFamilly: 'serif',
+  fontFamilly: 'sans-serif',
   textAlign: 'center',
   backgroundColor: 'skyblue',
   color: 'black',
