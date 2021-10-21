@@ -1,8 +1,9 @@
-import { TOAST_TYPE, toaster } from './toast.js';
+import { TOAST_TYPE, TEMPLATE_TOAST_TYPE, toaster } from './toast.js';
 import {
   getRandomColor,
   getRandomNum,
-  getFontSizeRemovedPerPixel
+  getFontSizeRemovedPerPixel,
+  getId
 } from './utils.js';
 import canvas from './store.mjs';
 
@@ -18,6 +19,9 @@ const $textInput = document.querySelector('.text-input');
 const $fontSelectContainer = document.querySelector('.font-select-container');
 const $favBgList = document.querySelector('.fav-bg-list');
 const $favFontList = document.querySelector('.fav-font-list');
+const $templateContainer = document.querySelector(
+  '.favorite-template-container'
+);
 const $bgColorPicker = document.querySelector('.bg-color-picker');
 const $fontColorPicker = document.querySelector('.font-color-picker');
 const $upload = document.querySelector('.upload');
@@ -33,7 +37,9 @@ const favoriteFontColor = JSON.parse(localStorage.getItem('favoriteFontColor'))
   ? JSON.parse(localStorage.getItem('favoriteFontColor'))
   : [];
 
-let templateLists = JSON.parse(localStorage.getItem('template'));
+let templateLists = JSON.parse(localStorage.getItem('template'))
+  ? JSON.parse(localStorage.getItem('template'))
+  : [];
 
 function renderText() {
   const textArrayByLinefeed = $textInput.value.match(/[^\r\n|\r|\n]+/g) || [];
@@ -100,24 +106,22 @@ const renderFavoriteColor = () => {
 
 const templateRender = () => {
   const $container = document.querySelector('.favorite-template-container');
-
   $container.innerHTML = `${templateLists
     .map(
       template =>
-        `<div><img class="template-img" src=${template.thumbnail}></div>`
+        `<div><img class="template-img" src=${template.thumbnail}><div class="template-remove">&times;</div></div>`
     )
     .join('')}`;
 };
-
-const getId = () =>
-  document.querySelector('.favorite-template-container').children.length + 1;
 
 const addTemplate = () => {
   // localStorage에 추가하기
   const template = {
     id: getId(),
     thumbnail: $canvas.toDataURL(),
-    url: $source.src ? $source.src : '',
+    url: $source.src.replace(/http:\/\/127.0.0.1:5500\//, '')
+      ? $source.src
+      : '',
     width: canvas.getWidth(),
     height: canvas.getHeight(),
     fontSize: canvas.getFontSize(),
@@ -131,6 +135,7 @@ const addTemplate = () => {
   templateLists.push(template);
   localStorage.setItem('template', JSON.stringify(templateLists));
 
+  toaster.createToastAction(TEMPLATE_TOAST_TYPE.SUCCESS);
   templateRender();
 };
 
@@ -158,12 +163,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
   renderFavoriteColor();
 
-  // template 받아오기
-  if (templateLists) {
-    templateRender();
-  } else {
+  // template container 랜더링 하기
+  if (!templateLists) {
     templateLists = [];
+    return;
   }
+
+  templateRender();
 });
 
 $widthSetting.onkeyup = ({ target }) => {
@@ -220,7 +226,8 @@ $fontSelectContainer.onchange = ({ target }) => {
 $bgColorPicker.onchange = e => {
   canvas.setBackgroundColor(e.target.value);
   canvas.setIsImage(false);
-  $source.removeAttribute('src');
+  $source.src = '';
+
   render();
 };
 
@@ -228,7 +235,7 @@ $bgColorPicker.onchange = e => {
 document.querySelector('.random-color-canvas').onclick = () => {
   canvas.setBackgroundColor(getRandomColor());
   canvas.setIsImage(false);
-  $source.removeAttribute('src');
+  $source.src = '';
   $bgColorPicker.value = canvas.getBackgroundColor();
   render();
 };
@@ -327,16 +334,28 @@ $favFontList.onclick = e => {
 };
 
 // template 적용하기
-document.querySelector('.favorite-template-container').onclick = ({
-  target
-}) => {
-  if (!target.classList.contains('template-img')) return;
-
-  const id = [
-    ...document.querySelector('.favorite-template-container').children
-  ].indexOf(target.parentNode);
+$templateContainer.onclick = ({ target }) => {
+  const id = [...$templateContainer.children].indexOf(target.parentNode);
   if (id === -1) return;
 
+  // 템플릿 삭제 버튼
+  if (target.classList.contains('template-remove')) {
+    const deleted = id + 1;
+
+    templateLists = templateLists.filter(template => template.id !== deleted);
+    templateLists = templateLists.map((template, i) => {
+      template.id = i + 1;
+      return template;
+    });
+    localStorage.setItem('template', JSON.stringify(templateLists));
+    templateRender();
+
+    return;
+  }
+
+  if (!target.classList.contains('template-img')) return;
+
+  // 템플릿 적용
   templateLists.forEach(template => {
     if (template.id === id + 1) setCanvasState(template);
   });
