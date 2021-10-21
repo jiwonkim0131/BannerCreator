@@ -1,10 +1,16 @@
 import { TOAST_TYPE, toaster } from './toast.js';
-import { getRandomColor, getRandomNum } from './utils.js';
+import {
+  getRandomColor,
+  getRandomNum,
+  getFontSizeRemovedPerPixel
+} from './utils.js';
+import canvas from './store.mjs';
 
 const $widthSetting = document.querySelector('.width-setting');
 const $heightSetting = document.querySelector('.height-setting');
 const $settingCheckbox = document.querySelector('.setting-checkbox');
 const $scaleSetting = document.querySelector('.scale-setting');
+const $scaleValue = document.querySelector('.scale-value');
 const $canvas = document.querySelector('canvas');
 const ctx = $canvas.getContext('2d');
 const $source = document.querySelector('.canvas-img > img');
@@ -15,18 +21,6 @@ const $fontColorPicker = document.querySelector('.font-color-picker');
 const $favBgList = document.querySelector('.fav-bg-list');
 const $favFontList = document.querySelector('.fav-font-list');
 const $upload = document.querySelector('.upload');
-
-const canvas = {
-  width: 700,
-  height: 350,
-  fontSize: '40px',
-  fontFamilly: 'serif',
-  textAlign: 'center',
-  backgroundColor: 'skyblue',
-  color: 'black',
-  index: 0,
-  isImage: false
-};
 
 // 로컬스토리지에 저장된배경, 폰트 색 즐겨찾기 데이터
 const favoriteBackgroundColor = JSON.parse(
@@ -40,43 +34,45 @@ const favoriteFontColor = JSON.parse(localStorage.getItem('favoriteFontColor'))
 
 let templateLists = JSON.parse(localStorage.getItem('template'));
 
-function renderText(x) {
-  const textArrayByLinefeed = $textInput.value.match(/[^\r\n|\r|\n]+/g);
+function renderText() {
+  const textArrayByLinefeed = $textInput.value.match(/[^\r\n|\r|\n]+/g) || [];
   const LINE_HEIGHT = 1.2;
+  const PADDING = 10;
+  const currentX =
+    canvas.getTextAlign() === 'center'
+      ? canvas.getWidth() / 2
+      : canvas.getTextAlign() === 'left'
+      ? PADDING
+      : canvas.getWidth() - PADDING;
 
   textArrayByLinefeed.forEach((text, index) => {
     const currentY =
-      (canvas.height -
+      (canvas.getHeight() -
         textArrayByLinefeed.length *
-          canvas.fontSize.slice(0, 2) *
+          getFontSizeRemovedPerPixel(canvas.getFontSize()) *
           LINE_HEIGHT) /
         2 +
-      canvas.fontSize.slice(0, 2) * index * LINE_HEIGHT;
-    ctx.fillText(text, x, currentY);
+      getFontSizeRemovedPerPixel(canvas.getFontSize()) * LINE_HEIGHT * index;
+
+    ctx.fillText(text, currentX, currentY);
   });
 }
 
 const render = () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-  if (canvas.isImage) {
-    ctx.drawImage($source, 0, 0, canvas.width, canvas.height);
+  if (canvas.getIsImage()) {
+    ctx.drawImage($source, 0, 0, canvas.getWidth(), canvas.getHeight());
   } else {
-    ctx.fillStyle = canvas.backgroundColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = canvas.getBackgroundColor();
+    ctx.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
   }
 
-  ctx.font = canvas.fontSize + ' ' + canvas.fontFamilly;
-  ctx.textAlign = canvas.textAlign;
+  ctx.font = canvas.getFontSize() + ' ' + canvas.getFontFamilly();
+  ctx.textAlign = canvas.getTextAlign();
   ctx.textBaseline = 'top';
-  const x =
-    canvas.textAlign === 'center'
-      ? canvas.width / 2
-      : canvas.textAlign === 'left'
-      ? 10
-      : canvas.width - 10;
-  ctx.fillStyle = canvas.color;
-  renderText(x);
+  ctx.fillStyle = canvas.getColor();
+  renderText();
 };
 
 // 배경 색 즐겨찾기 초기값 설정 함수
@@ -151,13 +147,13 @@ const addTemplate = () => {
     id: getId(),
     thumbnail: $canvas.toDataURL(),
     url: $source.src ? $source.src : '',
-    width: canvas.width,
-    height: canvas.height,
-    fontSize: canvas.fontSize,
-    fontFamilly: canvas.fontFamilly,
-    textAlign: canvas.textAlign,
-    backgroundColor: canvas.backgroundColor,
-    color: canvas.color,
+    width: canvas.getWidth(),
+    height: canvas.getHeight(),
+    fontSize: canvas.getFontSize(),
+    fontFamilly: canvas.getFontFamilly(),
+    textAlign: canvas.getTextAlign(),
+    backgroundColor: canvas.getBackgroundColor(),
+    color: canvas.getColor(),
     content: $textInput.value || 'hello, world'
   };
 
@@ -167,44 +163,27 @@ const addTemplate = () => {
   templateRender();
 };
 
-const setCanvasState = ({
-  url,
-  width,
-  height,
-  fontSize,
-  fontFamilly,
-  textAlign,
-  backgroundColor,
-  color,
-  content
-}) => {
-  canvas.width = width;
-  canvas.height = height;
-  canvas.fontSize = fontSize;
-  canvas.fontFamilly = fontFamilly;
-  canvas.textAlign = textAlign;
-  canvas.backgroundColor = backgroundColor;
-  canvas.color = color;
-  canvas.isImage = url !== '';
-  $source.src = url !== '' ? url : '';
+const setCanvasState = template => {
+  canvas.setCanvas(template);
+  $source.src = template.url !== '' ? template.url : '';
 
-  $widthSetting.value = canvas.width;
-  $canvas.setAttribute('width', canvas.width);
+  $widthSetting.value = canvas.getWidth();
+  $canvas.setAttribute('width', canvas.getWidth());
 
-  $heightSetting.value = canvas.height;
-  $canvas.setAttribute('height', canvas.height);
+  $heightSetting.value = canvas.getHeight();
+  $canvas.setAttribute('height', canvas.getHeight());
 
-  $textInput.value = content;
+  $textInput.value = template.content;
 };
 
 window.addEventListener('DOMContentLoaded', () => {
   $bgColorPicker.value = getRandomColor();
-  canvas.backgroundColor = $bgColorPicker.value;
+  canvas.setBackgroundColor($bgColorPicker.value);
 
-  $widthSetting.value = canvas.width;
-  $heightSetting.value = canvas.height;
-  ctx.fillStyle = canvas.backgroundColor;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  $widthSetting.value = canvas.getWidth();
+  $heightSetting.value = canvas.getHeight();
+  ctx.fillStyle = canvas.getBackgroundColor();
+  ctx.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
   // 로컬스토리지에 저장되어있는 즐겨찾기(배경색, 폰트색) 초기화
   fetchFavoriteBgColor();
@@ -219,33 +198,34 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 $widthSetting.onkeyup = ({ target }) => {
-  canvas.width = target.value;
-  $canvas.setAttribute('width', canvas.width);
+  canvas.setWidth(target.value);
+  $canvas.setAttribute('width', canvas.getWidth());
   render();
 };
 
 $heightSetting.onkeyup = ({ target }) => {
-  canvas.height = target.value;
-  $canvas.setAttribute('height', canvas.height);
+  canvas.setHeight(target.value);
+  $canvas.setAttribute('height', canvas.getHeight());
   render();
 };
 
 $settingCheckbox.onchange = ({ target }) => {
-  $scaleSetting.disabled = !$scaleSetting.disabled;
-  $widthSetting.disabled = !$widthSetting.disabled;
-  $heightSetting.disabled = !$heightSetting.disabled;
+  [$widthSetting, $heightSetting, $scaleSetting].forEach($el => {
+    $el.disabled = !$el.disabled;
+  });
+
   if (!target.checked) {
-    canvas.width = $canvas.getAttribute('width');
-    canvas.height = $canvas.getAttribute('height');
+    canvas.setWidth($canvas.getAttribute('width'));
+    canvas.setHeight($canvas.getAttribute('height'));
     $scaleSetting.value = 1;
-    document.querySelector('.scale-value').textContent = 1;
+    $scaleValue.textContent = 1;
   }
 };
 
 $scaleSetting.oninput = ({ target }) => {
-  document.querySelector('.scale-value').textContent = target.value;
-  $widthSetting.value = Math.round(canvas.width * target.value);
-  $heightSetting.value = Math.round(canvas.height * target.value);
+  $scaleValue.textContent = target.value;
+  $widthSetting.value = Math.round(canvas.getWidth() * target.value);
+  $heightSetting.value = Math.round(canvas.getHeight() * target.value);
   $canvas.setAttribute('width', $widthSetting.value);
   $canvas.setAttribute('height', $heightSetting.value);
   ctx.scale(target.value, target.value);
@@ -253,19 +233,24 @@ $scaleSetting.oninput = ({ target }) => {
 };
 
 $textInput.onkeyup = () => {
+  const PADDING = 20;
+
   $textInput.style.height = 'auto';
-  $textInput.style.height = $textInput.scrollHeight - 20 + 'px';
+  $textInput.style.height = $textInput.scrollHeight - PADDING + 'px';
+
   render();
 };
+
 $fontSelectContainer.onchange = ({ target }) => {
-  canvas[target.name] = target.value;
+  canvas.setFont(target.name, target.value);
+
   render();
 };
 
 // 캔버스 컬러 피커 색상 선택  이벤트
 $bgColorPicker.onchange = e => {
-  canvas.backgroundColor = e.target.value;
-  canvas.isImage = false;
+  canvas.setBackgroundColor(e.target.value);
+  canvas.setIsImage(false);
   $source.removeAttribute('src');
 
   render();
@@ -273,30 +258,30 @@ $bgColorPicker.onchange = e => {
 
 // 캔버스 컬러 피커 랜덤 색상 변경  이벤트
 document.querySelector('.random-color-canvas').onclick = () => {
-  canvas.backgroundColor = getRandomColor();
-  canvas.isImage = false;
+  canvas.setBackgroundColor(getRandomColor());
+  canvas.setIsImage(false);
   $source.removeAttribute('src');
-  $bgColorPicker.value = canvas.backgroundColor;
+  $bgColorPicker.value = canvas.getBackgroundColor();
 
   render();
 };
 
 // 폰트 컬러 피커 색상 선택 이벤트
 $fontColorPicker.onchange = e => {
-  canvas.color = e.target.value;
+  canvas.setColor(e.target.value);
   render();
 };
 
 // 폰트 컬러 피커 랜덤 색상 변경  이벤트
 document.querySelector('.random-color-font').onclick = e => {
-  canvas.color = getRandomColor();
-  $fontColorPicker.value = canvas.color;
+  canvas.setColor(getRandomColor());
+  $fontColorPicker.value = canvas.getColor();
   render();
 };
 
 // 현재 배경색 즐겨찾기에 저장
 document.querySelector('.favorite-bg').onclick = () => {
-  if (favoriteBackgroundColor.includes(canvas.backgroundColor + '')) {
+  if (favoriteBackgroundColor.includes(canvas.getBackgroundColor() + '')) {
     toaster.createToastAction(TOAST_TYPE.WARNING);
     return;
   }
@@ -307,7 +292,7 @@ document.querySelector('.favorite-bg').onclick = () => {
     return;
   }
 
-  favoriteBackgroundColor.push(canvas.backgroundColor);
+  favoriteBackgroundColor.push(canvas.getBackgroundColor());
   localStorage.setItem(
     'favoriteBackgroundColor',
     JSON.stringify(favoriteBackgroundColor)
@@ -317,7 +302,7 @@ document.querySelector('.favorite-bg').onclick = () => {
 
 // 현재 폰트색 즐겨찾기에 저장
 document.querySelector('.favorite-font').onclick = () => {
-  if (favoriteFontColor.includes(canvas.color + '')) {
+  if (favoriteFontColor.includes(canvas.getColor() + '')) {
     toaster.createToastAction(TOAST_TYPE.WARNING);
     return;
   }
@@ -328,7 +313,7 @@ document.querySelector('.favorite-font').onclick = () => {
     return;
   }
 
-  favoriteFontColor.push(canvas.color);
+  favoriteFontColor.push(canvas.getColor());
   localStorage.setItem('favoriteFontColor', JSON.stringify(favoriteFontColor));
   favoriteFontItemAdd();
 };
@@ -344,10 +329,11 @@ $favBgList.onclick = e => {
     e.target.parentNode.remove();
   }
   if (e.target.classList.contains('fav-bg-item')) {
-    canvas.backgroundColor =
-      favoriteBackgroundColor[e.target.parentNode.getAttribute('id')];
-    $bgColorPicker.value = canvas.backgroundColor;
-    canvas.isImage = false;
+    canvas.setBackgroundColor(
+      favoriteBackgroundColor[e.target.parentNode.getAttribute('id')]
+    );
+    $bgColorPicker.value = canvas.getBackgroundColor();
+    canvas.setIsImage(false);
     render();
   }
 };
@@ -363,8 +349,8 @@ $favFontList.onclick = e => {
     e.target.parentNode.remove();
   }
   if (e.target.classList.contains('fav-font-item')) {
-    canvas.color = favoriteFontColor[e.target.parentNode.getAttribute('id')];
-    $fontColorPicker.value = canvas.color;
+    canvas.setColor(favoriteFontColor[e.target.parentNode.getAttribute('id')]);
+    $fontColorPicker.value = canvas.getColor();
     render();
   }
 };
@@ -404,7 +390,7 @@ $upload.onclick = e => {
 };
 
 $source.onload = () => {
-  canvas.isImage = true;
+  canvas.setIsImage(true);
   render();
 };
 
@@ -416,9 +402,8 @@ document.querySelector('.download').onclick = e => {
 // 랜덤 이미지 생성 이벤트
 document.querySelector('.random-image').onclick = () => {
   const randomIndex = getRandomNum();
-  canvas.isImage = true;
+  canvas.setIsImage(true);
   $source.src = `./img/img-${randomIndex}.png`;
-  canvas.index = randomIndex;
 };
 
 // 템플릿 추가하기
