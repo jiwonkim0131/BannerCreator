@@ -89,7 +89,7 @@ const renderFavoriteColor = () => {
   const favoriteBgcolor = `${[...favoriteBackgroundColor]
     .map(
       (cur, idx) =>
-        `<div class="fav-bg-item-container" id="${idx}"><div class="fav-item-delete">-</div>
+        `<div class="fav-bg-item-container" id="${idx}"><div class="fav-item-delete">&times</div>
     <div class="fav-bg-item" style="background-color:${cur}"></div></div>`
     )
     .join('')}`;
@@ -99,7 +99,7 @@ const renderFavoriteColor = () => {
   const favoriteFontcolor = `${[...favoriteFontColor]
     .map(
       (cur, idx) =>
-        `<div class="fav-font-item-container" id="${idx}"><div class="fav-item-delete">-</div>
+        `<div class="fav-font-item-container" id="${idx}"><div class="fav-item-delete">&times</div>
     <div class="fav-font-item" style="background-color:${cur}"></div></div>`
     )
     .join('')}`;
