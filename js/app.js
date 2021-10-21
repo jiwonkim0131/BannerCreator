@@ -17,13 +17,13 @@ const ctx = $canvas.getContext('2d');
 const $source = document.querySelector('.canvas-img > img');
 const $textInput = document.querySelector('.text-input');
 const $fontSelectContainer = document.querySelector('.font-select-container');
-const $bgColorPicker = document.querySelector('.bg-color-picker');
-const $fontColorPicker = document.querySelector('.font-color-picker');
 const $favBgList = document.querySelector('.fav-bg-list');
 const $favFontList = document.querySelector('.fav-font-list');
 const $templateContainer = document.querySelector(
   '.favorite-template-container'
 );
+const $bgColorPicker = document.querySelector('.bg-color-picker');
+const $fontColorPicker = document.querySelector('.font-color-picker');
 const $upload = document.querySelector('.upload');
 
 // 로컬스토리지에 저장된배경, 폰트 색 즐겨찾기 데이터
@@ -32,6 +32,7 @@ const favoriteBackgroundColor = JSON.parse(
 )
   ? JSON.parse(localStorage.getItem('favoriteBackgroundColor'))
   : [];
+
 const favoriteFontColor = JSON.parse(localStorage.getItem('favoriteFontColor'))
   ? JSON.parse(localStorage.getItem('favoriteFontColor'))
   : [];
@@ -81,56 +82,26 @@ const render = () => {
   renderText();
 };
 
-// 배경 색 즐겨찾기 초기값 설정 함수
-const fetchFavoriteBgColor = () => {
-  favoriteBackgroundColor.forEach((_, idx) => {
-    const $favBgItemContainer = document.createElement('div');
-    $favBgItemContainer.classList.add('fav-bg-item-container');
-    $favBgItemContainer.setAttribute('id', idx);
+const renderFavoriteColor = () => {
+  const favoriteBgcolor = `${[...favoriteBackgroundColor]
+    .map(
+      (cur, idx) =>
+        `<div class="fav-bg-item-container" id="${idx}"><div class="fav-item-delete">-</div>
+    <div class="fav-bg-item" style="background-color:${cur}"></div></div>`
+    )
+    .join('')}`;
 
-    $favBgItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
-    <div class="fav-bg-item"></div>`;
-    $favBgList.appendChild($favBgItemContainer);
-    $favBgList.lastElementChild.lastElementChild.style.backgroundColor =
-      favoriteBackgroundColor[idx];
-  });
-};
+  $favBgList.innerHTML = favoriteBgcolor;
 
-// 글자 색 즐겨찾기 초기값 설정 함수
-const fetchFavoriteFontColor = () => {
-  favoriteFontColor.forEach((_, idx) => {
-    const $favFontItemContainer = document.createElement('div');
-    $favFontItemContainer.classList.add('fav-font-item-container');
-    $favFontItemContainer.setAttribute('id', idx);
+  const favoriteFontcolor = `${[...favoriteFontColor]
+    .map(
+      (cur, idx) =>
+        `<div class="fav-font-item-container" id="${idx}"><div class="fav-item-delete">-</div>
+    <div class="fav-font-item" style="background-color:${cur}"></div></div>`
+    )
+    .join('')}`;
 
-    $favFontItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
-  <div class="fav-font-item"></div>`;
-    $favFontList.appendChild($favFontItemContainer);
-    $favFontList.lastElementChild.lastElementChild.style.backgroundColor =
-      favoriteFontColor[idx];
-  });
-};
-
-const favoriteBgItemAdd = () => {
-  const $favBgItemContainer = document.createElement('div');
-  $favBgItemContainer.classList.add('fav-bg-item-container');
-  $favBgItemContainer.setAttribute('id', favoriteBackgroundColor.length - 1);
-  $favBgItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
-  <div class="fav-bg-item"></div>`;
-  $favBgList.appendChild($favBgItemContainer);
-  $favBgList.lastElementChild.lastElementChild.style.backgroundColor =
-    favoriteBackgroundColor[favoriteBackgroundColor.length - 1];
-};
-
-const favoriteFontItemAdd = () => {
-  const $favFontItemContainer = document.createElement('div');
-  $favFontItemContainer.classList.add('fav-font-item-container');
-  $favFontItemContainer.setAttribute('id', favoriteFontColor.length - 1);
-  $favFontItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
-  <div class="fav-font-item"></div>`;
-  $favFontList.appendChild($favFontItemContainer);
-  $favFontList.lastElementChild.lastElementChild.style.backgroundColor =
-    favoriteFontColor[favoriteFontColor.length - 1];
+  $favFontList.innerHTML = favoriteFontcolor;
 };
 
 const templateRender = () => {
@@ -182,17 +153,15 @@ const setCanvasState = template => {
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  $bgColorPicker.value = getRandomColor();
-  canvas.setBackgroundColor($bgColorPicker.value);
+  canvas.setBackgroundColor(getRandomColor());
+  $bgColorPicker.value = canvas.getBackgroundColor();
 
   $widthSetting.value = canvas.getWidth();
   $heightSetting.value = canvas.getHeight();
   ctx.fillStyle = canvas.getBackgroundColor();
   ctx.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-  // 로컬스토리지에 저장되어있는 즐겨찾기(배경색, 폰트색) 초기화
-  fetchFavoriteBgColor();
-  fetchFavoriteFontColor();
+  renderFavoriteColor();
 
   // template container 랜더링 하기
   if (!templateLists) {
@@ -268,7 +237,6 @@ document.querySelector('.random-color-canvas').onclick = () => {
   canvas.setIsImage(false);
   $source.src = '';
   $bgColorPicker.value = canvas.getBackgroundColor();
-
   render();
 };
 
@@ -279,7 +247,7 @@ $fontColorPicker.onchange = e => {
 };
 
 // 폰트 컬러 피커 랜덤 색상 변경  이벤트
-document.querySelector('.random-color-font').onclick = e => {
+document.querySelector('.random-color-font').onclick = () => {
   canvas.setColor(getRandomColor());
   $fontColorPicker.value = canvas.getColor();
   render();
@@ -291,19 +259,17 @@ document.querySelector('.favorite-bg').onclick = () => {
     toaster.createToastAction(TOAST_TYPE.WARNING);
     return;
   }
-  if (favoriteBackgroundColor.length < 5) {
-    toaster.createToastAction(TOAST_TYPE.SUCCESS);
-  } else {
+  if (favoriteBackgroundColor.length >= 5) {
     toaster.createToastAction(TOAST_TYPE.ERROR);
     return;
   }
-
   favoriteBackgroundColor.push(canvas.getBackgroundColor());
+  toaster.createToastAction(TOAST_TYPE.SUCCESS);
   localStorage.setItem(
     'favoriteBackgroundColor',
     JSON.stringify(favoriteBackgroundColor)
   );
-  favoriteBgItemAdd();
+  renderFavoriteColor();
 };
 
 // 현재 폰트색 즐겨찾기에 저장
@@ -312,32 +278,35 @@ document.querySelector('.favorite-font').onclick = () => {
     toaster.createToastAction(TOAST_TYPE.WARNING);
     return;
   }
-  if (favoriteFontColor.length < 5) {
-    toaster.createToastAction(TOAST_TYPE.SUCCESS);
-  } else {
+  if (favoriteFontColor.length >= 5) {
     toaster.createToastAction(TOAST_TYPE.ERROR);
     return;
   }
 
   favoriteFontColor.push(canvas.getColor());
+  toaster.createToastAction(TOAST_TYPE.SUCCESS);
   localStorage.setItem('favoriteFontColor', JSON.stringify(favoriteFontColor));
-  favoriteFontItemAdd();
+  renderFavoriteColor();
 };
 
 // 즐겨찾기에 저장된 배경색 클릭 시 반영
 $favBgList.onclick = e => {
   if (e.target.classList.contains('fav-item-delete')) {
     favoriteBackgroundColor.splice(e.target.parentNode.getAttribute('id'), 1);
+    e.target.parentNode.remove();
+    [...$favBgList.children].forEach((child, idx) => {
+      child.setAttribute('id', `${idx}`);
+    });
     localStorage.setItem(
       'favoriteBackgroundColor',
       JSON.stringify(favoriteBackgroundColor)
     );
-    e.target.parentNode.remove();
   }
   if (e.target.classList.contains('fav-bg-item')) {
     canvas.setBackgroundColor(
       favoriteBackgroundColor[e.target.parentNode.getAttribute('id')]
     );
+
     $bgColorPicker.value = canvas.getBackgroundColor();
     canvas.setIsImage(false);
     render();
@@ -348,11 +317,14 @@ $favBgList.onclick = e => {
 $favFontList.onclick = e => {
   if (e.target.classList.contains('fav-item-delete')) {
     favoriteFontColor.splice(e.target.parentNode.getAttribute('id'), 1);
+    e.target.parentNode.remove();
+    [...$favFontList.children].forEach((child, idx) => {
+      child.setAttribute('id', `${idx}`);
+    });
     localStorage.setItem(
       'favoriteFontColor',
       JSON.stringify(favoriteFontColor)
     );
-    e.target.parentNode.remove();
   }
   if (e.target.classList.contains('fav-font-item')) {
     canvas.setColor(favoriteFontColor[e.target.parentNode.getAttribute('id')]);
