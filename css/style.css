@@ -7,7 +7,6 @@ body {
   display: flex;
   align-items: center;
   background-size: cover;
-  padding: 20px;
 }
 
 .container {
@@ -15,6 +14,7 @@ body {
   background: white;
   border-radius: 10px;
   margin: auto;
+  padding: 15px 30px 15px 30px;
   box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.2);
 }
 
@@ -25,10 +25,17 @@ select {
   appearance: none;
   width: 160px;
   height: 40px;
-  margin: 0 55px;
+  margin: 0 10px;
   padding: 10px;
   border: 1px solid #999;
   border-radius: 2px;
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%),
+    linear-gradient(135deg, gray 50%, transparent 50%),
+    linear-gradient(to right, #ccc, #ccc);
+  background-position: calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+  background-size: 5px 5px, 5px 5px, 1px 1.5em;
+  background-repeat: no-repeat;
 }
 
 select:after {
@@ -130,8 +137,13 @@ select:after {
 
 .font-select-container {
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin-top: 60px;
+  margin: 30px auto;
+}
+
+.fi {
+  font-size: 25px;
 }
 
 .scale-value {
@@ -139,73 +151,116 @@ select:after {
   width: 30px;
 }
 
+.favorite-setting-container,
 .button-container {
   display: flex;
   justify-content: center;
   gap: 10px;
-  padding: 20px;
+  padding: 15px;
 }
 
 .color-picker-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
-
-  margin: 25px auto;
+  padding: 20px;
   gap: 10px;
-  width: 700px;
 }
 
 .colorpicker {
-  width: 100px;
-  height: 35px;
+  width: 50px;
+  height: 50px;
+  background-color: white;
+  border: 1px solid #e7e7e7;
+  border-radius: 3px;
+  line-height: 50px;
 }
 
 .canvas-color-picker-container,
 .font-color-picker-list {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 .random-color-canvas,
-.random-color-font {
-  height: 35px;
+.random-color-font,
+.template-store {
+  width: 50px;
+  height: 50px;
   background-color: white;
-  border: 1px solid;
+  border: 1px solid #e7e7e7;
   border-radius: 3px;
-  font-size: 16px;
+  transition-duration: 0.4s;
+  line-height: 50px;
 }
 
-.favorite-setting-container {
-  text-align: center;
-  width: 700px;
-  margin: auto;
+.random-color-canvas:hover {
+  background-color: #00a678;
+  color: white;
 }
 
-.favorite-setting-container button {
-  margin: 0 10px;
-  height: 35px;
-  display: inline-block;
+.random-color-font:hover {
+  background-color: #f44336;
+  color: white;
+}
+
+.favorite-bg,
+.favorite-font,
+.template-store {
+  width: 50px;
+  height: 50px;
+  gap: 10px;
   background-color: white;
-  border: 1px solid;
+  border: 1px solid #e7e7e7;
+  line-height: 50px;
   border-radius: 3px;
-  font-size: 16px;
+  line-height: 50px;
+  transition-duration: 0.4s;
 }
 
+.favorite-bg:hover {
+  background-color: #c1ea51;
+  color: white;
+}
+.favorite-font:hover {
+  background-color: #e2e23b;
+  color: white;
+}
+.template-store:hover {
+  background-color: #f2a360;
+  color: white;
+}
 .upload,
 .download,
 .random-image {
-  font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
   background-color: white;
-  width: 100px;
-  border: 1px solid;
+  width: 50px;
+  height: 50px;
+  border: 1px solid #e7e7e7;
   border-radius: 3px;
-  padding: 5px;
   text-align: center;
   text-decoration: none;
   color: black;
   box-sizing: border-box;
+  line-height: 50px;
+  transition-duration: 0.4s;
+}
+
+.download:hover {
+  background-color: #f2b706;
+  color: white;
+}
+
+.upload:hover {
+  background-color: #0455bf;
+  color: white;
+}
+
+.random-image:hover {
+  background-color: #aa76e6;
+  color: white;
 }
 
 /*즐겨찾기 버튼 메뉴바 스타일링*/

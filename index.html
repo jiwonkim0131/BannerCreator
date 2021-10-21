@@ -10,6 +10,7 @@
     href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400"
     rel="stylesheet"
     />
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css'>
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body background="./img/background.png">
@@ -44,12 +45,14 @@
         <textarea name="" id="" class="text-input" rows="1" placeholder="Type text here :)"></textarea>
       </div>
       <div class="font-select-container">
+        <i class="fi fi-rs-text"></i>
         <select name="fontFamilly">
           <option value="serif">serif</option>
           <option value="sans-serif" selected>sans-serif</option>
           <option value="monospace">monospace</option>
           <option value="cursive">cursive</option>
         </select>
+        <i class="fi fi-rs-letter-case"></i>
         <select name="fontSize">
           <option value="25px">25px</option>
           <option value="30px">30px</option>
@@ -60,6 +63,7 @@
           <option value="55px">55px</option>
           <option value="60px">60px</option>
         </select>
+        <i class="fi fi-rs-align-center"></i>
         <select name="textAlign">
           <option value="left">left</option>
           <option value="center" selected>center</option>
@@ -68,34 +72,36 @@
       </div>
       <div class="color-picker-container">
         <div class="canvas-color-picker-container">
-          <button class="random-color-canvas">랜덤 배경색</button>
+          <button class="random-color-canvas" title="배경색 랜덤 설정"><i class="fi fi-rs-fill"></i></button>
           <input class="colorpicker bg-color-picker" type="color" />
         </div>
         <div class="font-color-picker-list">
-          <button class="random-color-font">랜덤 글씨색</button>
+          <button class="random-color-font" title="글자색 랜덤 설정"><i class="fi fi-rs-paint-brush"></i></button>
           <input class="colorpicker font-color-picker" type="color"/>
         </div>
       </div>
       <div class="favorite-setting-container">
-        <button class="favorite-bg">배경색 저장</button>
-        <button class="favorite-font">글씨색 저장</button>
-        <button class="template-store">템플릿 저장</button>
+        <button class="favorite-bg" title="배경색 저장"><i class="fi fi-rs-bookmark"></i></button>
+        <button class="favorite-font" title="글자색 저장"><i class="fi fi-rs-thumbtack"></i></button>
+        <button class="template-store" title="템플릿 저장"><i class="fi fi-rs-layers"></i></button>
       </div>
       <div class="button-container">
-        <a class="download" href="" download="BannerCreator.png">다운로드</a>
-        <label class="upload">
-          사진업로드
-          <input type="file" class="hidden" />
+        <a class="download" href="" download="BannerCreator.png" title="이미지 다운로드">
+           <i class="fi fi-rs-cloud-download"></i>
+        </a>
+        <label class="upload" title="이미지 업로드">
+          <i class="fi fi-rs-cloud-upload"></i>
+          <input type="file" class="hidden"/>
         </label>
-        <button class="random-image">랜덤 이미지</button>
+        <button class="random-image" title="랜덤 이미지 설정"><i class="fi fi-rs-refresh"></i></button>
       </div>
       <div class="favorite-color-container">
         <section class="fav-bg-container">
-          <span class="fav-bg-label">배경</span>
+          <span class="fav-bg-label">배경색</span>
           <div class="fav-bg-list"></div>
         </section>
         <section class="fav-font-container">
-          <span class="fav-font-label">폰트</span>
+          <span class="fav-font-label">글자색</span>
           <div class="fav-font-list"></div>
         </section>
       </div>
