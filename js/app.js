@@ -58,7 +58,6 @@ function renderText(x) {
 
 const render = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  console.log(canvas.width, canvas.height);
 
   if (canvas.isImage) {
     ctx.drawImage($source, 0, 0, canvas.width, canvas.height);
@@ -78,6 +77,124 @@ const render = () => {
       : canvas.width - 10;
   ctx.fillStyle = canvas.color;
   renderText(x);
+};
+
+// 배경 색 즐겨찾기 초기값 설정 함수
+const fetchFavoriteBgColor = () => {
+  favoriteBackgroundColor.forEach((_, idx) => {
+    const $favBgItemContainer = document.createElement('div');
+    $favBgItemContainer.classList.add('fav-bg-item-container');
+    $favBgItemContainer.setAttribute('id', idx);
+
+    $favBgItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
+    <div class="fav-bg-item"></div>`;
+    $favBgList.appendChild($favBgItemContainer);
+    $favBgList.lastElementChild.lastElementChild.style.backgroundColor =
+      favoriteBackgroundColor[idx];
+  });
+};
+
+// 글자 색 즐겨찾기 초기값 설정 함수
+const fetchFavoriteFontColor = () => {
+  favoriteFontColor.forEach((_, idx) => {
+    const $favFontItemContainer = document.createElement('div');
+    $favFontItemContainer.classList.add('fav-font-item-container');
+    $favFontItemContainer.setAttribute('id', idx);
+
+    $favFontItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
+  <div class="fav-font-item"></div>`;
+    $favFontList.appendChild($favFontItemContainer);
+    $favFontList.lastElementChild.lastElementChild.style.backgroundColor =
+      favoriteFontColor[idx];
+  });
+};
+
+const favoriteBgItemAdd = () => {
+  const $favBgItemContainer = document.createElement('div');
+  $favBgItemContainer.classList.add('fav-bg-item-container');
+  $favBgItemContainer.setAttribute('id', favoriteBackgroundColor.length - 1);
+  $favBgItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
+  <div class="fav-bg-item"></div>`;
+  $favBgList.appendChild($favBgItemContainer);
+  $favBgList.lastElementChild.lastElementChild.style.backgroundColor =
+    favoriteBackgroundColor[favoriteBackgroundColor.length - 1];
+};
+
+const favoriteFontItemAdd = () => {
+  const $favFontItemContainer = document.createElement('div');
+  $favFontItemContainer.classList.add('fav-font-item-container');
+  $favFontItemContainer.setAttribute('id', favoriteFontColor.length - 1);
+  $favFontItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
+  <div class="fav-font-item"></div>`;
+  $favFontList.appendChild($favFontItemContainer);
+  $favFontList.lastElementChild.lastElementChild.style.backgroundColor =
+    favoriteFontColor[favoriteFontColor.length - 1];
+};
+
+const templateRender = () => {
+  const $container = document.querySelector('.favorite-template-container');
+
+  $container.innerHTML = `${templateLists
+    .map(
+      template =>
+        `<div><img class="template-img" src=${template.thumbnail}></div>`
+    )
+    .join('')}`;
+};
+
+const getId = () =>
+  document.querySelector('.favorite-template-container').children.length + 1;
+
+const addTemplate = () => {
+  // localStorage에 추가하기
+  const template = {
+    id: getId(),
+    thumbnail: $canvas.toDataURL(),
+    url: $source.src ? $source.src : '',
+    width: canvas.width,
+    height: canvas.height,
+    fontSize: canvas.fontSize,
+    fontFamilly: canvas.fontFamilly,
+    textAlign: canvas.textAlign,
+    backgroundColor: canvas.backgroundColor,
+    color: canvas.color,
+    content: $textInput.value || 'hello, world'
+  };
+
+  templateLists.push(template);
+  localStorage.setItem('template', JSON.stringify(templateLists));
+
+  templateRender();
+};
+
+const setCanvasState = ({
+  url,
+  width,
+  height,
+  fontSize,
+  fontFamilly,
+  textAlign,
+  backgroundColor,
+  color,
+  content
+}) => {
+  canvas.width = width;
+  canvas.height = height;
+  canvas.fontSize = fontSize;
+  canvas.fontFamilly = fontFamilly;
+  canvas.textAlign = textAlign;
+  canvas.backgroundColor = backgroundColor;
+  canvas.color = color;
+  canvas.isImage = url !== '';
+  $source.src = url !== '' ? url : '';
+
+  $widthSetting.value = canvas.width;
+  $canvas.setAttribute('width', canvas.width);
+
+  $heightSetting.value = canvas.height;
+  $canvas.setAttribute('height', canvas.height);
+
+  $textInput.value = content;
 };
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -177,58 +294,6 @@ document.querySelector('.random-color-font').onclick = e => {
   render();
 };
 
-const favoriteBgItemAdd = () => {
-  const $favBgItemContainer = document.createElement('div');
-  $favBgItemContainer.classList.add('fav-bg-item-container');
-  $favBgItemContainer.setAttribute('id', favoriteBackgroundColor.length - 1);
-  $favBgItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
-  <div class="fav-bg-item"></div>`;
-  $favBgList.appendChild($favBgItemContainer);
-  $favBgList.lastElementChild.lastElementChild.style.backgroundColor =
-    favoriteBackgroundColor[favoriteBackgroundColor.length - 1];
-};
-
-const favoriteFontItemAdd = () => {
-  const $favFontItemContainer = document.createElement('div');
-  $favFontItemContainer.classList.add('fav-font-item-container');
-  $favFontItemContainer.setAttribute('id', favoriteFontColor.length - 1);
-  $favFontItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
-  <div class="fav-font-item"></div>`;
-  $favFontList.appendChild($favFontItemContainer);
-  $favFontList.lastElementChild.lastElementChild.style.backgroundColor =
-    favoriteFontColor[favoriteFontColor.length - 1];
-};
-
-// 배경 색 즐겨찾기 초기값 설정 함수
-const fetchFavoriteBgColor = () => {
-  favoriteBackgroundColor.forEach((_, idx) => {
-    const $favBgItemContainer = document.createElement('div');
-    $favBgItemContainer.classList.add('fav-bg-item-container');
-    $favBgItemContainer.setAttribute('id', idx);
-
-    $favBgItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
-    <div class="fav-bg-item"></div>`;
-    $favBgList.appendChild($favBgItemContainer);
-    $favBgList.lastElementChild.lastElementChild.style.backgroundColor =
-      favoriteBackgroundColor[idx];
-  });
-};
-
-// 글자 색 즐겨찾기 초기값 설정 함수
-const fetchFavoriteFontColor = () => {
-  favoriteFontColor.forEach((_, idx) => {
-    const $favFontItemContainer = document.createElement('div');
-    $favFontItemContainer.classList.add('fav-font-item-container');
-    $favFontItemContainer.setAttribute('id', idx);
-
-    $favFontItemContainer.innerHTML = `<div class="fav-item-delete">-</div>
-  <div class="fav-font-item"></div>`;
-    $favFontList.appendChild($favFontItemContainer);
-    $favFontList.lastElementChild.lastElementChild.style.backgroundColor =
-      favoriteFontColor[idx];
-  });
-};
-
 // 현재 배경색 즐겨찾기에 저장
 document.querySelector('.favorite-bg').onclick = () => {
   if (favoriteBackgroundColor.includes(canvas.backgroundColor + '')) {
@@ -313,7 +378,6 @@ document.querySelector('.favorite-template-container').onclick = ({
   const id = [
     ...document.querySelector('.favorite-template-container').children
   ].indexOf(target.parentNode);
-  console.log(id);
   if (id === -1) return;
 
   templateLists.forEach(template => {
@@ -321,36 +385,6 @@ document.querySelector('.favorite-template-container').onclick = ({
   });
 
   render();
-};
-
-const setCanvasState = ({
-  url,
-  width,
-  height,
-  fontSize,
-  fontFamilly,
-  textAlign,
-  backgroundColor,
-  color,
-  content
-}) => {
-  canvas.width = width;
-  canvas.height = height;
-  canvas.fontSize = fontSize;
-  canvas.fontFamilly = fontFamilly;
-  canvas.textAlign = textAlign;
-  canvas.backgroundColor = backgroundColor;
-  canvas.color = color;
-  canvas.isImage = url !== '';
-  $source.src = url !== '' ? url : '';
-
-  $widthSetting.value = canvas.width;
-  $canvas.setAttribute('width', canvas.width);
-
-  $heightSetting.value = canvas.height;
-  $canvas.setAttribute('height', canvas.height);
-
-  $textInput.value = content;
 };
 
 $upload.onchange = e => {
@@ -391,39 +425,3 @@ document.querySelector('.random-image').onclick = () => {
 document.querySelector('.template-store').onclick = () => {
   addTemplate();
 };
-
-const addTemplate = () => {
-  // localStorage에 추가하기
-  const template = {
-    id: getId(),
-    thumbnail: $canvas.toDataURL(),
-    url: $source.src ? $source.src : '',
-    width: canvas.width,
-    height: canvas.height,
-    fontSize: canvas.fontSize,
-    fontFamilly: canvas.fontFamilly,
-    textAlign: canvas.textAlign,
-    backgroundColor: canvas.backgroundColor,
-    color: canvas.color,
-    content: $textInput.value || 'hello, world'
-  };
-
-  templateLists.push(template);
-  localStorage.setItem('template', JSON.stringify(templateLists));
-
-  templateRender();
-};
-
-const templateRender = () => {
-  const $container = document.querySelector('.favorite-template-container');
-
-  $container.innerHTML = `${templateLists
-    .map(
-      template =>
-        `<div><img class="template-img" src=${template.thumbnail}></div>`
-    )
-    .join('')}`;
-};
-
-const getId = () =>
-  document.querySelector('.favorite-template-container').children.length + 1;
