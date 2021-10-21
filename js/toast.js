@@ -21,25 +21,33 @@ const toaster = {
     });
 
     setTimeout(() => toastQueue.pop().remove(), 3000);
-  },
+  }
 };
 
 const TOAST_TYPE = {
   SUCCESS: {
     type: 'success',
     title: '즐겨찾기 추가 완료 🥳',
-    message: '즐겨찾기에 선택한 색이 추가되었습니다!',
+    message: '즐겨찾기에 선택한 색이 추가되었습니다!'
   },
   WARNING: {
     type: 'warning',
     title: '즐겨찾기 추가 실패 👀',
-    message: '이미 즐겨찾기에 등록되어있는 색입니다.',
+    message: '이미 즐겨찾기에 등록되어있는 색입니다.'
   },
   ERROR: {
     type: 'error',
     title: '즐겨찾기 추가 실패 😭',
-    message: '등록 가능한 개수를 초과했습니다. 삭제 후 다시 시도해주세요.',
-  },
+    message: '등록 가능한 개수를 초과했습니다. 삭제 후 다시 시도해주세요.'
+  }
+};
+
+const TEMPLATE_TOAST_TYPE = {
+  SUCCESS: {
+    type: 'success',
+    title: '템플릿 추가 완료 🥳',
+    message: '즐겨찾기에 템플릿이 추가되었습니다!'
+  }
 };
 
 $body.onclick = e => {
@@ -47,4 +55,4 @@ $body.onclick = e => {
   e.target.parentNode.remove();
 };
 
-export { TOAST_TYPE, toaster };
+export { TOAST_TYPE, TEMPLATE_TOAST_TYPE, toaster };

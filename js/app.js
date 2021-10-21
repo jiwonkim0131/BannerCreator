@@ -1,5 +1,5 @@
-import { TOAST_TYPE, toaster } from './toast.js';
-import { getRandomColor, getRandomNum } from './utils.js';
+import { TOAST_TYPE, TEMPLATE_TOAST_TYPE, toaster } from './toast.js';
+import { getRandomColor, getRandomNum, getId } from './utils.js';
 
 const $widthSetting = document.querySelector('.width-setting');
 const $heightSetting = document.querySelector('.height-setting');
@@ -14,6 +14,9 @@ const $bgColorPicker = document.querySelector('.bg-color-picker');
 const $fontColorPicker = document.querySelector('.font-color-picker');
 const $favBgList = document.querySelector('.fav-bg-list');
 const $favFontList = document.querySelector('.fav-font-list');
+const $templateContainer = document.querySelector(
+  '.favorite-template-container'
+);
 const $upload = document.querySelector('.upload');
 
 const canvas = {
@@ -38,10 +41,12 @@ const favoriteFontColor = JSON.parse(localStorage.getItem('favoriteFontColor'))
   ? JSON.parse(localStorage.getItem('favoriteFontColor'))
   : [];
 
-let templateLists = JSON.parse(localStorage.getItem('template'));
+let templateLists = JSON.parse(localStorage.getItem('template'))
+  ? JSON.parse(localStorage.getItem('template'))
+  : [];
 
 function renderText(x) {
-  const textArrayByLinefeed = $textInput.value.match(/[^\r\n|\r|\n]+/g);
+  const textArrayByLinefeed = $textInput.value.match(/[^\r\n|\r|\n]+/g) || [];
   const LINE_HEIGHT = 1.2;
 
   textArrayByLinefeed.forEach((text, index) => {
@@ -132,27 +137,30 @@ const favoriteFontItemAdd = () => {
 };
 
 const templateRender = () => {
-  const $container = document.querySelector('.favorite-template-container');
+  if (templateLists.length <= 0) return;
 
+  const $container = document.querySelector('.favorite-template-container');
   $container.innerHTML = `${templateLists
     .map(
       template =>
-        `<div><img class="template-img" src=${template.thumbnail}></div>`
+        `<div><img class="template-img" src=${template.thumbnail}><div class="template-remove">&times;</div></div>`
     )
     .join('')}`;
 };
 
-const getId = () =>
-  document.querySelector('.favorite-template-container').children.length + 1;
+// const getId = () =>
+//   document.querySelector('.favorite-template-container').children.length + 1;
 
 const addTemplate = () => {
   // localStorage에 추가하기
   const template = {
     id: getId(),
     thumbnail: $canvas.toDataURL(),
-    url: $source.src ? $source.src : '',
-    width: canvas.width,
-    height: canvas.height,
+    url: $source.src.replace(/http:\/\/127.0.0.1:5500\//, '')
+      ? $source.src
+      : '',
+    width: $widthSetting.value,
+    height: $heightSetting.value,
     fontSize: canvas.fontSize,
     fontFamilly: canvas.fontFamilly,
     textAlign: canvas.textAlign,
@@ -164,6 +172,7 @@ const addTemplate = () => {
   templateLists.push(template);
   localStorage.setItem('template', JSON.stringify(templateLists));
 
+  toaster.createToastAction(TEMPLATE_TOAST_TYPE.SUCCESS);
   templateRender();
 };
 
@@ -210,12 +219,8 @@ window.addEventListener('DOMContentLoaded', () => {
   fetchFavoriteBgColor();
   fetchFavoriteFontColor();
 
-  // template 받아오기
-  if (templateLists) {
-    templateRender();
-  } else {
-    templateLists = [];
-  }
+  // template container 랜더링 하기
+  templateRender();
 });
 
 $widthSetting.onkeyup = ({ target }) => {
@@ -257,6 +262,7 @@ $textInput.onkeyup = () => {
   $textInput.style.height = $textInput.scrollHeight - 20 + 'px';
   render();
 };
+
 $fontSelectContainer.onchange = ({ target }) => {
   canvas[target.name] = target.value;
   render();
@@ -266,7 +272,8 @@ $fontSelectContainer.onchange = ({ target }) => {
 $bgColorPicker.onchange = e => {
   canvas.backgroundColor = e.target.value;
   canvas.isImage = false;
-  $source.removeAttribute('src');
+  // $source.removeAttribute('src');
+  $source.src = '';
 
   render();
 };
@@ -275,8 +282,9 @@ $bgColorPicker.onchange = e => {
 document.querySelector('.random-color-canvas').onclick = () => {
   canvas.backgroundColor = getRandomColor();
   canvas.isImage = false;
-  $source.removeAttribute('src');
-  $bgColorPicker.value = canvas.backgroundColor;
+  // $source.removeAttribute('src');
+  $source.src = '';
+  document.querySelector('.bg-color-picker').value = canvas.backgroundColor;
 
   render();
 };
@@ -370,15 +378,28 @@ $favFontList.onclick = e => {
 };
 
 // template 적용하기
-document.querySelector('.favorite-template-container').onclick = ({
-  target
-}) => {
+$templateContainer.onclick = ({ target }) => {
+  const id = [...$templateContainer.children].indexOf(target.parentNode);
+  if (id === -1) return;
+
+  // 템플릿 삭제 버튼
+  if (target.classList.contains('template-remove')) {
+    const deleted = id + 1;
+
+    templateLists = templateLists.filter(template => template.id !== deleted);
+    templateLists = templateLists.map((template, i) => {
+      template.id = i + 1;
+      return template;
+    });
+    localStorage.setItem('template', JSON.stringify(templateLists));
+    templateRender();
+
+    return;
+  }
+
   if (!target.classList.contains('template-img')) return;
 
-  const id = [
-    ...document.querySelector('.favorite-template-container').children
-  ].indexOf(target.parentNode);
-  if (id === -1) return;
+  // 템플릿 적용
 
   templateLists.forEach(template => {
     if (template.id === id + 1) setCanvasState(template);
@@ -418,7 +439,7 @@ document.querySelector('.random-image').onclick = () => {
   const randomIndex = getRandomNum();
   canvas.isImage = true;
   $source.src = `./img/img-${randomIndex}.png`;
-  canvas.index = randomIndex;
+  // canvas.index = randomIndex;
 };
 
 // 템플릿 추가하기
