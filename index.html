@@ -43,26 +43,38 @@
       </div>
       <div class="color-picker-container">
         <div class="canvas-color-picker-container">
-          <button class="random-color-canvas">캔버스 컬러 변경하기</button>
-          <input
-            class="colorpicker canvas-bg-color"
-            type="color"
-            value="#e66465"
-          />
+          <button class="random-color-canvas">배경색 변경하기</button>
+          <input class="colorpicker bg-color-picker" type="color" />
         </div>
         <div class="font-color-picker-list">
-          <button class="random-color-font"> 포인터 컬러 변경하기</button>
-          <input class="colorpicker font-color" type="color" value="#e66465" />
+          <button class="random-color-font">폰트색 변경하기</button>
+          <input class="colorpicker font-color-picker" type="color" value="#000000" />
+        </div>
+        <div class="favorite-setting-container">
+          <button class="favorite-bg">현재 배경색 저장</button>
+          <button class="favorite-font">현재 글씨색 저장</button>
+          <button>현재 템플릿 저장</button>
+        </div>
+        <div class="button-container">
+          <a class="download" href="" download="BannerCreator.png">다운로드</a>
+          <label class="upload">
+            사진업로드
+            <input type="file" class="hidden" />
+          </label>
+          <button class="random-image">랜덤 이미지</button>
+        </div>
       </div>
-      <div class="button-container">
-        <a class="download" href="" download="BannerCreator.png">다운로드</a>
-        <label class="upload">
-          사진업로드
-          <input type="file" class="hidden" />
-        </label>
-        <button class="random-image">랜덤 이미지</button>
+      <div class="favorite-color-container">
+        <section class="fav-bg-container">
+          <span class="fav-bg-label">배경</span>
+          <div class="fav-bg-list"></div>
+        </section>
+        <section class="fav-font-container">
+          <span class="fav-font-label">폰트</span>
+          <div class="fav-font-list"></div>
+        </section>
       </div>
     </div>
-    <script src="./js/app.js"></script>
+    <script type="module" src="./js/app.js"></script>
   </body>
 </html>
