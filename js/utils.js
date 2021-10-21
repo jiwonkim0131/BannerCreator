@@ -5,6 +5,9 @@ const getRandomNum = () => Math.floor(Math.random() * 10);
 
 const getFontSizeRemovedPerPixel = fontSize => fontSize.replace(/px/, '');
 
-const getId = () => JSON.parse(localStorage.getItem('template')).length + 1;
+const getId = () =>
+  JSON.parse(localStorage.getItem('template'))
+    ? JSON.parse(localStorage.getItem('template')).length + 1
+    : 1;
 
 export { getRandomColor, getRandomNum, getFontSizeRemovedPerPixel, getId };

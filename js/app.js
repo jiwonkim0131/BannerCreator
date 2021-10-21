@@ -16,6 +16,9 @@ const $canvas = document.querySelector('canvas');
 const ctx = $canvas.getContext('2d');
 const $source = document.querySelector('.canvas-img > img');
 const $textInput = document.querySelector('.text-input');
+const $fontFamily = document.querySelector('select[name="fontFamilly"]');
+const $fontSize = document.querySelector('select[name="fontSize"]');
+const $textAlign = document.querySelector('select[name="textAlign"]');
 const $fontSelectContainer = document.querySelector('.font-select-container');
 const $favBgList = document.querySelector('.fav-bg-list');
 const $favFontList = document.querySelector('.fav-font-list');
@@ -116,6 +119,7 @@ const templateRender = () => {
 
 const addTemplate = () => {
   // localStorage에 추가하기
+  console.log(canvas.getTextAlign());
   const template = {
     id: getId(),
     thumbnail: $canvas.toDataURL(),
@@ -150,6 +154,36 @@ const setCanvasState = template => {
   $canvas.setAttribute('height', canvas.getHeight());
 
   $textInput.value = template.content;
+
+  [...$fontFamily.children].map(child => {
+    if (child.getAttribute('selected') === '')
+      child.removeAttribute('selected');
+
+    if (child.getAttribute('value') === template.fontFamilly) {
+      child.setAttribute('selected', '');
+    }
+    return child;
+  });
+
+  [...$fontSize.children].map(child => {
+    if (child.getAttribute('selected') === '')
+      child.removeAttribute('selected');
+
+    if (child.getAttribute('value') === template.fontSize) {
+      child.setAttribute('selected', '');
+    }
+    return child;
+  });
+
+  [...$textAlign.children].map(child => {
+    if (child.getAttribute('selected') === '')
+      child.removeAttribute('selected');
+
+    if (child.getAttribute('value') === template.textAlign) {
+      child.selected = true;
+    }
+    return child;
+  });
 };
 
 window.addEventListener('DOMContentLoaded', () => {
