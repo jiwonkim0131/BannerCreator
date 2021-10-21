@@ -1,9 +1,20 @@
 body {
   position: relative;
+  height: 100vh;
   background-color: #fdfdfd;
   font-family: 'Open Sans';
   font-weight: 300;
-  /* background: url('../img/bg.jpeg'); */
+  display: flex;
+  align-items: center;
+}
+
+.container {
+  width: fit-content;
+  background: white;
+  border-radius: 10px;
+  margin: auto;
+  padding: 30px;
+  box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.2);
 }
 
 select {
@@ -184,8 +195,8 @@ select:after {
   width: 100%;
   max-width: 300px;
   padding: 20px;
-  border: 1px solid #808080;
   background-color: #faf9fa;
+  box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.2);
 }
 
 .favorite-color-container:hover {
@@ -214,21 +225,6 @@ select:after {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-}
-
-.fav-item-delete {
-  width: 15px;
-  height: 15px;
-  background: white;
-  border-radius: 50%;
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  border: none;
-  text-align: center;
-  border: 2px;
-  font-weight: 900;
-  border-color: yellow;
 }
 
 /* 토스터  스타일링*/
@@ -297,7 +293,6 @@ select:after {
 }
 
 .favorite-template {
-  border: 1px solid #808080;
   background-color: #faf9fa;
   min-width: 300px;
   position: absolute;
@@ -307,6 +302,7 @@ select:after {
   padding: 20px;
   padding-right: 50px;
   border-radius: 0 10px 10px 0;
+  box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.2);
 }
 
 .favorite-template:hover {
@@ -356,7 +352,8 @@ select:after {
   align-self: stretch;
 }
 
-.template-remove {
+.template-remove,
+.fav-item-delete {
   width: 20px;
   height: 20px;
   border-radius: 50%;
