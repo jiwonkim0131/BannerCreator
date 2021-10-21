@@ -4,22 +4,33 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./css/style.css" />
     <title>BannerCreator</title>
+    <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400"
+    />
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <div class="container">
       <h1 class="title">BannerCreator</h1>
+      <div class="setting-input-container">
+        <label>width<input class="width-setting" type="text" /></label>
+        <label>height<input class="height-setting" type="text" /></label>
+        <label>비율 크기 조절<input class="setting-checkbox" type="checkbox" /></label>
+        <label><input class="scale-setting" type="range" min="0.5" max="2" step="0.01" value="1" disabled /></label>
+        <span class="scale-value">1</span>
+      </div>
       <canvas id="canvas" width="700" height="350"></canvas>
       <div class="canvas-img hidden">
         <img src="" alt="" class="source" />
       </div>
-      <div class="setting-input-container">
-        <label>width<input class="width-setting" type="text" /></label>
-        <label>height<input class="height-setting" type="text" /></label>
-      </div>
-      <div class="text-input-container">
-        <input class="text-input" type="text" placeholder="Type text here :)" />
+      <div class="textarea-container">
+        <textarea name="" id="" class="text-input" rows="1" placeholder="Type text here :)"></textarea>
       </div>
       <div class="font-select-container">
         <select name="fontFamilly">
@@ -29,10 +40,14 @@
           <option value="cursive">cursive</option>
         </select>
         <select name="fontSize">
-          <option value="15px" selected>15px</option>
-          <option value="20px">20px</option>
           <option value="25px">25px</option>
           <option value="30px">30px</option>
+          <option value="35px">35px</option>
+          <option value="40px" selected>40px</option>
+          <option value="45px">45px</option>
+          <option value="50px">50px</option>
+          <option value="55px">55px</option>
+          <option value="60px">60px</option>
         </select>
         <select name="textAlign">
           <option value="left">left</option>

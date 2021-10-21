@@ -1,21 +1,23 @@
 import { TOAST_TYPE, toaster } from './toast.js';
+import { getRandomColor, getRandomNum } from './utils.js';
 
-const $canvas = document.querySelector('canvas');
 const $widthSetting = document.querySelector('.width-setting');
 const $heightSetting = document.querySelector('.height-setting');
+const $settingCheckbox = document.querySelector('.setting-checkbox');
+const $scaleSetting = document.querySelector('.scale-setting');
+const $canvas = document.querySelector('canvas');
+const ctx = $canvas.getContext('2d');
+const $source = document.querySelector('.canvas-img > img');
 const $textInput = document.querySelector('.text-input');
 const $fontSelectContainer = document.querySelector('.font-select-container');
-const ctx = $canvas.getContext('2d');
 const $favBgList = document.querySelector('.fav-bg-list');
 const $favFontList = document.querySelector('.fav-font-list');
-const $source = document.querySelector('.canvas-img > img');
 const $upload = document.querySelector('.upload');
-const $download = document.querySelector('.download');
 
 const canvas = {
   width: 700,
   height: 350,
-  fontSize: '15px',
+  fontSize: '40px',
   fontFamilly: 'serif',
   textAlign: 'center',
   backgroundColor: 'skyblue',
@@ -28,6 +30,18 @@ const canvas = {
 let favoriteBackgroundColor = JSON.parse(localStorage.getItem('favoriteBackgroundColor'));
 let favoriteFontColor = JSON.parse(localStorage.getItem('favoriteFontColor'));
 let templateLists = JSON.parse(localStorage.getItem('template'));
+
+function renderText(x) {
+  const textArrayByLinefeed = $textInput.value.match(/[^\r\n|\r|\n]+/g);
+  const LINE_HEIGHT = 1.2;
+
+  textArrayByLinefeed.forEach((text, index) => {
+    const currentY =
+      (canvas.height - textArrayByLinefeed.length * canvas.fontSize.slice(0, 2) * LINE_HEIGHT) / 2 +
+      canvas.fontSize.slice(0, 2) * index * LINE_HEIGHT;
+    ctx.fillText(text, x, currentY);
+  });
+}
 
 const render = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -42,6 +56,7 @@ const render = () => {
 
   ctx.font = canvas.fontSize + ' ' + canvas.fontFamilly;
   ctx.textAlign = canvas.textAlign;
+  ctx.textBaseline = 'top';
   const x =
     canvas.textAlign === 'center'
       ? canvas.width / 2
@@ -49,101 +64,10 @@ const render = () => {
       ? 10
       : canvas.width - 10;
   ctx.fillStyle = canvas.color;
-  ctx.fillText($textInput.value, x, canvas.height / 2);
-};
-
-// 랜덤 컬러 코드 생성
-const getRandomColor = () =>
-  '#' + ('000000' + Math.random().toString(16).slice(2, 8).toUpperCase()).slice(-6);
-
-const getRandomNum = range => Math.floor(Math.random() * 10);
-
-$widthSetting.onkeyup = ({ target }) => {
-  canvas.width = target.value;
-  $canvas.setAttribute('width', canvas.width);
-  render();
-};
-$heightSetting.onkeyup = ({ target }) => {
-  canvas.height = target.value;
-  $canvas.setAttribute('height', canvas.height);
-  render();
-};
-$textInput.onkeyup = () => {
-  render();
-};
-$fontSelectContainer.onchange = ({ target }) => {
-  canvas[target.name] = target.value;
-  render();
-};
-
-//캔버스 컬러 피커 색상 선택  이벤트
-document.querySelector('.bg-color-picker').onchange = e => {
-  canvas.backgroundColor = e.target.value;
-  canvas.isImage = false;
-  $source.removeAttribute('src');
-  render();
-};
-
-//캔버스 컬러 피커 랜덤 색상 변경  이벤트
-document.querySelector('.random-color-canvas').onclick = () => {
-  canvas.backgroundColor = getRandomColor();
-  canvas.isImage = false;
-
-  $source.removeAttribute('src');
-  document.querySelector('.bg-color-picker').value = canvas.backgroundColor;
-
-  render();
-};
-
-//폰트 컬러 피커 색상 선택 이벤트
-document.querySelector('.font-color-picker').onchange = e => {
-  canvas.color = e.target.value;
-  render();
-};
-
-//폰트 컬러 피커 랜덤 색상 변경  이벤트
-document.querySelector('.random-color-font').onclick = e => {
-  canvas.color = getRandomColor();
-  document.querySelector('.font-color-picker').value = canvas.color;
-  render();
-};
-
-//랜덤 이미지 생성 이벤트
-document.querySelector('.random-image').onclick = () => {
-  const randomIndex = getRandomNum();
-  canvas.isImage = true;
-  $source.src = `./img/img-${randomIndex}.png`;
-  canvas.index = randomIndex;
-};
-
-$upload.onchange = e => {
-  if (!e.target.matches('input')) return;
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    $source.setAttribute('src', reader.result);
-  };
-
-  reader.readAsDataURL(e.target.files[0]);
-};
-
-$upload.onclick = e => {
-  e.target.value = null;
-};
-
-$source.onload = () => {
-  canvas.isImage = true;
-  render();
-};
-
-// 캔버스 -> 이미지 다운로드 이벤트
-document.querySelector('.download').onclick = e => {
-  e.target.href = $canvas.toDataURL();
+  renderText(x);
 };
 
 window.addEventListener('DOMContentLoaded', () => {
-  //random bg color init
   document.querySelector('.bg-color-picker').value = getRandomColor();
   canvas.backgroundColor = document.querySelector('.bg-color-picker').value;
 
@@ -172,6 +96,82 @@ window.addEventListener('DOMContentLoaded', () => {
     templateLists = [];
   }
 });
+
+$widthSetting.onkeyup = ({ target }) => {
+  canvas.width = target.value;
+  $canvas.setAttribute('width', canvas.width);
+  render();
+};
+
+$heightSetting.onkeyup = ({ target }) => {
+  canvas.height = target.value;
+  $canvas.setAttribute('height', canvas.height);
+  render();
+};
+
+$settingCheckbox.onchange = ({ target }) => {
+  $scaleSetting.disabled = !$scaleSetting.disabled;
+  $widthSetting.disabled = !$widthSetting.disabled;
+  $heightSetting.disabled = !$heightSetting.disabled;
+  if (!target.checked) {
+    canvas.width = $canvas.getAttribute('width');
+    canvas.height = $canvas.getAttribute('height');
+    $scaleSetting.value = 1;
+    document.querySelector('.scale-value').textContent = 1;
+  }
+};
+
+$scaleSetting.oninput = ({ target }) => {
+  document.querySelector('.scale-value').textContent = target.value;
+  $widthSetting.value = Math.round(canvas.width * target.value);
+  $heightSetting.value = Math.round(canvas.height * target.value);
+  $canvas.setAttribute('width', $widthSetting.value);
+  $canvas.setAttribute('height', $heightSetting.value);
+  ctx.scale(target.value, target.value);
+  render();
+};
+
+$textInput.onkeyup = () => {
+  $textInput.style.height = 'auto';
+  $textInput.style.height = $textInput.scrollHeight - 20 + 'px';
+  render();
+};
+$fontSelectContainer.onchange = ({ target }) => {
+  canvas[target.name] = target.value;
+  render();
+};
+
+//캔버스 컬러 피커 색상 선택  이벤트
+document.querySelector('.bg-color-picker').onchange = e => {
+  canvas.backgroundColor = e.target.value;
+  canvas.isImage = false;
+  $source.removeAttribute('src');
+
+  render();
+};
+
+//캔버스 컬러 피커 랜덤 색상 변경  이벤트
+document.querySelector('.random-color-canvas').onclick = () => {
+  canvas.backgroundColor = getRandomColor();
+  canvas.isImage = false;
+  $source.removeAttribute('src');
+  document.querySelector('.bg-color-picker').value = canvas.backgroundColor;
+
+  render();
+};
+
+//폰트 컬러 피커 색상 선택 이벤트
+document.querySelector('.font-color-picker').onchange = e => {
+  canvas.color = e.target.value;
+  render();
+};
+
+//폰트 컬러 피커 랜덤 색상 변경  이벤트
+document.querySelector('.random-color-font').onclick = e => {
+  canvas.color = getRandomColor();
+  document.querySelector('.font-color-picker').value = canvas.color;
+  render();
+};
 
 const favoriteBgItemAdd = () => {
   const $favBgItemContainer = document.createElement('div');
@@ -315,7 +315,6 @@ const setCanvasState = ({
   color,
   content,
 }) => {
-  console.log(url, width);
   canvas.width = width;
   canvas.height = height;
   canvas.fontSize = fontSize;
@@ -325,7 +324,6 @@ const setCanvasState = ({
   canvas.color = color;
   canvas.isImage = url !== '' ? true : false;
   $source.src = url !== '' ? url : '';
-  console.log($source.src);
 
   $widthSetting.value = canvas.width;
   $canvas.setAttribute('width', canvas.width);
@@ -334,6 +332,40 @@ const setCanvasState = ({
   $canvas.setAttribute('height', canvas.height);
 
   $textInput.value = content;
+};
+
+$upload.onchange = e => {
+  if (!e.target.matches('input')) return;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    $source.setAttribute('src', reader.result);
+  };
+
+  reader.readAsDataURL(e.target.files[0]);
+};
+
+$upload.onclick = e => {
+  e.target.value = null;
+};
+
+$source.onload = () => {
+  canvas.isImage = true;
+  render();
+};
+
+// 캔버스 -> 이미지 다운로드 이벤트
+document.querySelector('.download').onclick = e => {
+  e.target.href = $canvas.toDataURL();
+};
+
+//랜덤 이미지 생성 이벤트
+document.querySelector('.random-image').onclick = () => {
+  const randomIndex = getRandomNum();
+  canvas.isImage = true;
+  $source.src = `./img/img-${randomIndex}.png`;
+  canvas.index = randomIndex;
 };
 
 // 템플릿 추가하기
