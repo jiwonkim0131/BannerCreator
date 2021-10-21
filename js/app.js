@@ -160,7 +160,7 @@ const setCanvasState = template => {
       child.removeAttribute('selected');
 
     if (child.getAttribute('value') === template.fontFamilly) {
-      child.setAttribute('selected', '');
+      child.selected = true;
     }
     return child;
   });
@@ -170,7 +170,7 @@ const setCanvasState = template => {
       child.removeAttribute('selected');
 
     if (child.getAttribute('value') === template.fontSize) {
-      child.setAttribute('selected', '');
+      child.selected = true;
     }
     return child;
   });
