@@ -119,13 +119,10 @@ const templateRender = () => {
 
 const addTemplate = () => {
   // localStorage에 추가하기
-  console.log(canvas.getTextAlign());
   const template = {
     id: getId(),
     thumbnail: $canvas.toDataURL(),
-    url: $source.src.replace(/http:\/\/127.0.0.1:5500\/|index.html/g, '')
-      ? $source.src
-      : '',
+    url: canvas.getIsImage() ? $source.src : '',
     width: canvas.getWidth(),
     height: canvas.getHeight(),
     fontSize: canvas.getFontSize(),
