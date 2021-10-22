@@ -13,7 +13,7 @@ body {
 }
 .container {
   justify-items: center;
-  background: white;
+  background: #fefefe;
   border-radius: 10px;
   margin: auto;
   padding: 15px 30px 15px 30px;
