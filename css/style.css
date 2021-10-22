@@ -8,7 +8,9 @@ body {
   align-items: center;
   background-size: cover;
 }
-
+.fi-rs-cloud-download {
+  display: block;
+}
 .container {
   justify-items: center;
   background: white;
@@ -219,6 +221,11 @@ select:after {
   transition-duration: 0.4s;
 }
 
+.fav-bg-label,
+.fav-font-label {
+  font-size: 20px;
+}
+
 .favorite-bg:hover {
   background-color: #c1ea51;
   color: white;
@@ -377,7 +384,7 @@ select:after {
   min-width: 300px;
   position: absolute;
   left: -330px;
-  top: 230px;
+  top: 240px;
   transition: all 0.4s ease;
   padding: 20px;
   padding-right: 50px;

@@ -419,8 +419,9 @@ $source.onload = () => {
 };
 
 // 캔버스 -> 이미지 다운로드 이벤트
-document.querySelector('.download').onclick = e => {
-  e.target.href = $canvas.toDataURL();
+document.querySelector('.fi-rs-cloud-download').onclick = () => {
+  document.querySelector('.download').href = $canvas.toDataURL();
+  document.querySelector('.download').click();
 };
 
 // 랜덤 이미지 생성 이벤트
