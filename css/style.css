@@ -110,14 +110,26 @@ select:after {
   margin-top: 40px;
   display: flex;
   justify-content: center;
+  align-items: center;
+  font-size: 18px;
+}
+.setting-input-container label {
 }
 
 .width-setting,
 .height-setting {
-  width: 150px;
-  height: 30px;
-  margin-left: 15px;
-  margin-right: 30px;
+  width: 120px;
+  height: 15px;
+  margin-left: 10px;
+  margin-right: 25px;
+  padding: 10px;
+  border: 1px solid #999;
+  border-radius: 2px;
+}
+
+.setting-checkbox {
+  transform: scale(1.5);
+  margin: 0 20px 0 10px;
 }
 
 .textarea-container {
@@ -150,6 +162,7 @@ select:after {
 
 .scale-value {
   display: inline-block;
+  margin-left: 10px;
   width: 30px;
 }
 
