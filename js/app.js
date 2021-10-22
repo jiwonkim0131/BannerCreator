@@ -181,6 +181,14 @@ const setCanvasState = template => {
     }
     return child;
   });
+
+  $settingCheckbox.checked = false;
+  $scaleSetting.disabled = true;
+  $scaleSetting.value = 1;
+  $scaleValue.textContent = 1;
+
+  $widthSetting.disabled = false;
+  $heightSetting.disabled = false;
 };
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -425,7 +433,8 @@ document.querySelector('.fi-rs-cloud-download').onclick = () => {
 document.querySelector('.random-image').onclick = () => {
   const randomIndex = getRandomNum();
   canvas.setIsImage(true);
-  $source.src = `./img/img-${randomIndex}.png`;
+  $source.src = `./img/img-${randomIndex}.
+  png`;
 };
 
 // 템플릿 추가하기
