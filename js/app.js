@@ -7,23 +7,23 @@ import {
 } from './utils.js';
 import canvas from './store.mjs';
 
-const $widthSetting = document.querySelector('.width-setting');
-const $heightSetting = document.querySelector('.height-setting');
-const $settingCheckbox = document.querySelector('.setting-checkbox');
-const $scaleSetting = document.querySelector('.scale-setting');
-const $scaleValue = document.querySelector('.scale-value');
+const $widthSetting = document.querySelector('.canvas-width');
+const $heightSetting = document.querySelector('.canvas-height');
+const $settingCheckbox = document.querySelector('.canvas-ratio');
+const $scaleSetting = document.querySelector('.canvas-scale');
+const $scaleValue = document.querySelector('.canvas-scale-value');
 const $canvas = document.querySelector('canvas');
 const ctx = $canvas.getContext('2d');
 const $source = document.querySelector('.canvas-img > img');
-const $textInput = document.querySelector('.text-input');
-const $fontFamily = document.querySelector('select[name="fontFamilly"]');
+const $textInput = document.querySelector('.canvas-textarea');
+const $fontFamily = document.querySelector('select[name="fontFamily"]');
 const $fontSize = document.querySelector('select[name="fontSize"]');
 const $textAlign = document.querySelector('select[name="textAlign"]');
 const $fontSelectContainer = document.querySelector('.font-select-container');
-const $favBgList = document.querySelector('.fav-bg-list');
-const $favFontList = document.querySelector('.fav-font-list');
+const $favBgList = document.querySelector('.bookmark-bg-store-list');
+const $favFontList = document.querySelector('.bookmark-font-store-list');
 const $templateContainer = document.querySelector(
-  '.favorite-template-container'
+  '.bookmark-template-store-list'
 );
 const $bgColorPicker = document.querySelector('.bg-color-picker');
 const $fontColorPicker = document.querySelector('.font-color-picker');
@@ -69,8 +69,6 @@ function renderText() {
 }
 
 const render = () => {
-  ctx.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
   if (canvas.getIsImage()) {
     ctx.drawImage($source, 0, 0, canvas.getWidth(), canvas.getHeight());
   } else {
@@ -78,7 +76,7 @@ const render = () => {
     ctx.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
   }
 
-  ctx.font = canvas.getFontSize() + ' ' + canvas.getFontFamilly();
+  ctx.font = canvas.getFontSize() + ' ' + canvas.getFontFamily();
   ctx.textAlign = canvas.getTextAlign();
   ctx.textBaseline = 'top';
   ctx.fillStyle = canvas.getColor();
@@ -89,8 +87,8 @@ const renderFavoriteColor = () => {
   const favoriteBgcolor = `${[...favoriteBackgroundColor]
     .map(
       (cur, idx) =>
-        `<div class="fav-bg-item-container" id="${idx}"><div class="fav-item-delete">&times</div>
-    <div class="fav-bg-item" style="background-color:${cur}"></div></div>`
+        `<div class="bookmark-bg-item-container" id="${idx}"><div class="bookmark-item-delete">&times</div>
+    <div class="bookmark-bg-circle" style="background-color:${cur}"></div></div>`
     )
     .join('')}`;
 
@@ -99,8 +97,8 @@ const renderFavoriteColor = () => {
   const favoriteFontcolor = `${[...favoriteFontColor]
     .map(
       (cur, idx) =>
-        `<div class="fav-font-item-container" id="${idx}"><div class="fav-item-delete">&times</div>
-    <div class="fav-font-item" style="background-color:${cur}"></div></div>`
+        `<div class="bookmark-font-item-container" id="${idx}"><div class="bookmark-item-delete">&times</div>
+    <div class="bookmark-font-circle" style="background-color:${cur}"></div></div>`
     )
     .join('')}`;
 
@@ -108,11 +106,11 @@ const renderFavoriteColor = () => {
 };
 
 const templateRender = () => {
-  const $container = document.querySelector('.favorite-template-container');
+  const $container = document.querySelector('.bookmark-template-store-list');
   $container.innerHTML = `${templateLists
     .map(
       template =>
-        `<div><img class="template-img" src=${template.thumbnail}><div class="template-remove">&times;</div></div>`
+        `<div><img class="bookmark-template-thumbnail" src=${template.thumbnail}><div class="bookmark-item-delete">&times;</div></div>`
     )
     .join('')}`;
 };
@@ -126,7 +124,7 @@ const addTemplate = () => {
     width: canvas.getWidth(),
     height: canvas.getHeight(),
     fontSize: canvas.getFontSize(),
-    fontFamilly: canvas.getFontFamilly(),
+    fontFamily: canvas.getFontFamily(),
     textAlign: canvas.getTextAlign(),
     backgroundColor: canvas.getBackgroundColor(),
     color: canvas.getColor(),
@@ -156,7 +154,7 @@ const setCanvasState = template => {
     if (child.getAttribute('selected') === '')
       child.removeAttribute('selected');
 
-    if (child.getAttribute('value') === template.fontFamilly) {
+    if (child.getAttribute('value') === template.fontFamily) {
       child.selected = true;
     }
     return child;
@@ -271,7 +269,7 @@ $bgColorPicker.onchange = e => {
 };
 
 // 캔버스 컬러 피커 랜덤 색상 변경  이벤트
-document.querySelector('.random-color-canvas').onclick = () => {
+document.querySelector('.bg-random-color').onclick = () => {
   canvas.setBackgroundColor(getRandomColor());
   canvas.setIsImage(false);
   $source.src = '';
@@ -286,14 +284,14 @@ $fontColorPicker.onchange = e => {
 };
 
 // 폰트 컬러 피커 랜덤 색상 변경  이벤트
-document.querySelector('.random-color-font').onclick = () => {
+document.querySelector('.font-random-color').onclick = () => {
   canvas.setColor(getRandomColor());
   $fontColorPicker.value = canvas.getColor();
   render();
 };
 
 // 현재 배경색 즐겨찾기에 저장
-document.querySelector('.favorite-bg').onclick = () => {
+document.querySelector('.bookmark-bg-save').onclick = () => {
   if (favoriteBackgroundColor.includes(canvas.getBackgroundColor() + '')) {
     toaster.createToastAction(TOAST_TYPE.WARNING);
     return;
@@ -312,7 +310,7 @@ document.querySelector('.favorite-bg').onclick = () => {
 };
 
 // 현재 폰트색 즐겨찾기에 저장
-document.querySelector('.favorite-font').onclick = () => {
+document.querySelector('.bookmark-font-save').onclick = () => {
   if (favoriteFontColor.includes(canvas.getColor() + '')) {
     toaster.createToastAction(TOAST_TYPE.WARNING);
     return;
@@ -330,7 +328,7 @@ document.querySelector('.favorite-font').onclick = () => {
 
 // 즐겨찾기에 저장된 배경색 클릭 시 반영
 $favBgList.onclick = e => {
-  if (e.target.classList.contains('fav-item-delete')) {
+  if (e.target.classList.contains('bookmark-item-delete')) {
     favoriteBackgroundColor.splice(e.target.parentNode.getAttribute('id'), 1);
     e.target.parentNode.remove();
     [...$favBgList.children].forEach((child, idx) => {
@@ -341,7 +339,7 @@ $favBgList.onclick = e => {
       JSON.stringify(favoriteBackgroundColor)
     );
   }
-  if (e.target.classList.contains('fav-bg-item')) {
+  if (e.target.classList.contains('bookmark-bg-circle')) {
     canvas.setBackgroundColor(
       favoriteBackgroundColor[e.target.parentNode.getAttribute('id')]
     );
@@ -354,7 +352,7 @@ $favBgList.onclick = e => {
 
 // 즐겨찾기에 저장된 글자색 클릭 시 반영
 $favFontList.onclick = e => {
-  if (e.target.classList.contains('fav-item-delete')) {
+  if (e.target.classList.contains('bookmark-item-delete')) {
     favoriteFontColor.splice(e.target.parentNode.getAttribute('id'), 1);
     e.target.parentNode.remove();
     [...$favFontList.children].forEach((child, idx) => {
@@ -365,7 +363,7 @@ $favFontList.onclick = e => {
       JSON.stringify(favoriteFontColor)
     );
   }
-  if (e.target.classList.contains('fav-font-item')) {
+  if (e.target.classList.contains('bookmark-font-circle')) {
     canvas.setColor(favoriteFontColor[e.target.parentNode.getAttribute('id')]);
     $fontColorPicker.value = canvas.getColor();
     render();
@@ -378,7 +376,7 @@ $templateContainer.onclick = ({ target }) => {
   if (id === -1) return;
 
   // 템플릿 삭제 버튼
-  if (target.classList.contains('template-remove')) {
+  if (target.classList.contains('bookmark-item-delete')) {
     const deleted = id + 1;
 
     templateLists = templateLists.filter(template => template.id !== deleted);
@@ -392,7 +390,7 @@ $templateContainer.onclick = ({ target }) => {
     return;
   }
 
-  if (!target.classList.contains('template-img')) return;
+  if (!target.classList.contains('bookmark-template-thumbnail')) return;
 
   // 템플릿 적용
   templateLists.forEach(template => {
@@ -433,11 +431,10 @@ document.querySelector('.fi-rs-cloud-download').onclick = () => {
 document.querySelector('.random-image').onclick = () => {
   const randomIndex = getRandomNum();
   canvas.setIsImage(true);
-  $source.src = `./img/img-${randomIndex}.
-  png`;
+  $source.src = `./img/img-${randomIndex}.png`;
 };
 
 // 템플릿 추가하기
-document.querySelector('.template-store').onclick = () => {
+document.querySelector('.bookmark-template-save').onclick = () => {
   addTemplate();
 };

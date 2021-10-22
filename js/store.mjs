@@ -2,7 +2,7 @@ const canvas = {
   width: 700,
   height: 350,
   fontSize: '40px',
-  fontFamilly: 'sans-serif',
+  fontFamily: 'sans-serif',
   textAlign: 'center',
   backgroundColor: 'skyblue',
   color: 'black',
@@ -12,7 +12,7 @@ const canvas = {
 const getWidth = () => canvas.width;
 const getHeight = () => canvas.height;
 const getFontSize = () => canvas.fontSize;
-const getFontFamilly = () => canvas.fontFamilly;
+const getFontFamily = () => canvas.fontFamily;
 const getTextAlign = () => canvas.textAlign;
 const getBackgroundColor = () => canvas.backgroundColor;
 const getColor = () => canvas.color;
@@ -40,7 +40,7 @@ const setCanvas = newCanvas => {
   canvas.width = newCanvas.width;
   canvas.height = newCanvas.height;
   canvas.fontSize = newCanvas.fontSize;
-  canvas.fontFamilly = newCanvas.fontFamilly;
+  canvas.fontFamily = newCanvas.fontFamily;
   canvas.textAlign = newCanvas.textAlign;
   canvas.backgroundColor = newCanvas.backgroundColor;
   canvas.color = newCanvas.color;
@@ -51,7 +51,7 @@ const store = {
   getWidth,
   getHeight,
   getFontSize,
-  getFontFamilly,
+  getFontFamily,
   getTextAlign,
   getBackgroundColor,
   getColor,
