@@ -69,6 +69,8 @@ function renderText() {
 }
 
 const render = () => {
+  ctx.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
   if (canvas.getIsImage()) {
     ctx.drawImage($source, 0, 0, canvas.getWidth(), canvas.getHeight());
   } else {
@@ -227,10 +229,9 @@ $settingCheckbox.onchange = ({ target }) => {
   });
 
   if (!target.checked) {
-    canvas.setWidth($canvas.getAttribute('width'));
-    canvas.setHeight($canvas.getAttribute('height'));
     $scaleSetting.value = 1;
     $scaleValue.textContent = 1;
+    render();
   }
 };
 
