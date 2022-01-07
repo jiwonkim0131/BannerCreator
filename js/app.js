@@ -212,12 +212,42 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 $widthSetting.onkeyup = ({ target }) => {
+  const MAX_WIDTH = 1920;
+
+  if (/[^0-9]/g.test(target.value)) {
+    target.value = target.value.replace(/[^0-9]/g, '');
+
+    alert('숫자만 입력해주세요');
+    return;
+  }
+
+  if (+target.value > MAX_WIDTH) {
+    target.value = MAX_WIDTH;
+
+    alert(`지정할 수 있는 최대 너비는 ${MAX_WIDTH}입니다.`);
+  }
+
   canvas.setWidth(target.value);
   $canvas.setAttribute('width', canvas.getWidth());
   render();
 };
 
 $heightSetting.onkeyup = ({ target }) => {
+  const MAX_HEIGHT = 1080;
+
+  if (/[^0-9]/g.test(target.value)) {
+    target.value = target.value.replace(/[^0-9]/g, '');
+
+    alert('숫자만 입력해주세요');
+    return;
+  }
+
+  if (+target.value > MAX_HEIGHT) {
+    target.value = MAX_HEIGHT;
+
+    alert(`지정할 수 있는 최대 높이는 ${MAX_HEIGHT}입니다.`);
+  }
+
   canvas.setHeight(target.value);
   $canvas.setAttribute('height', canvas.getHeight());
   render();
